@@ -1,12 +1,12 @@
-# tank-2d
+# pak-man
 
-Game inspired by Tank Battle City
+Game inspired by the classic Pac-Man arcade experience.
 
 # features
 
-1. Tank Movement – Smooth movement in all directions across the map.
-2. Obstacle Navigation – Tanks can move around walls and terrain.
-3. Shooting Mechanism – Fire bullets to destroy enemies and obstacles.
-4. Enemy AI – Basic enemy tanks that move and shoot.
-5. Map Design – Multiple levels with different layouts.
-6. Score System – Points for destroying enemies.
+1. Player Movement – Smooth navigation in all directions through maze-like paths.
+2. Maze Design – Multiple levels with unique layouts and pathways.
+3. Collectibles – Eat pellets and power-ups scattered across the map.
+4. Enemy AI – Ghosts with varying behaviors that chase or ambush the player.
+5. Power Mechanism – Temporary invincibility when consuming special power pellets.
+6. Score System – Points for eating pellets, power-ups, and defeating ghosts.
