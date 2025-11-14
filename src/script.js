@@ -131,6 +131,9 @@ function updatePlayerPosition(sprite) {
       }
       break;
     case "left":
+      if (currentPosition.x < -tileSize / 2) {
+        return { x: canvasWidth + tileSize / 2, y: currentPosition.y };
+      }
       if (checkCollision("left", currentPosition) === false) {
         return {
           x: currentPosition.x - speed,
@@ -139,6 +142,9 @@ function updatePlayerPosition(sprite) {
       }
       break;
     case "right":
+      if (currentPosition.x > canvasWidth + tileSize / 2) {
+        return { x: -tileSize / 2, y: currentPosition.y };
+      }
       if (checkCollision("right", currentPosition) === false) {
         return {
           x: currentPosition.x + speed,
@@ -166,7 +172,6 @@ function tryChangeDirection(sprite) {
     return;
   }
   if (checkCollision(requestedDirection, currentPosition) === false) {
-    console.log("Direction changed to:", requestedDirection);
     sprite.setDirection(requestedDirection);
     requestedDirection = "none";
   }
