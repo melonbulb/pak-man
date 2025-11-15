@@ -6,7 +6,7 @@
 class Sprite {
   /**
    *
-   * @param {SpritePosition} position
+   * @param {PixelCoordinate} position
    * @param {number} speed
    * @param {number} tileSize
    */
@@ -22,7 +22,7 @@ class Sprite {
 
   /**
    * Updates the pixel and grid position based on the given pixel position.
-   * @param {SpritePosition} position
+   * @param {PixelCoordinate} position
    */
   setPosition(position) {
     this.position = position;

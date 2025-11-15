@@ -8,7 +8,7 @@ import PakMan from "./objects/Pakman.js";
 const canvasWidth = 800;
 const canvasHeight = 600;
 const tileSize = 40;
-const spawn = getPosition(5, 1, tileSize);
+const spawn = getPosition({ x: 5, y: 1 }, tileSize);
 
 const canvas = /** @type {HTMLCanvasElement} */ (
   document.getElementById("pakman")

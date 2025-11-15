@@ -7,14 +7,14 @@ import { getGridPosition, isTileCenter } from "./utils.js";
  *
  * @param {GameMap} map
  * @param {Direction} direction
- * @param {SpritePosition} currentPosition
+ * @param {PixelCoordinate} currentPosition
  * @returns
  */
 function isBlockedByWall(map, direction, currentPosition) {
   if (isTileCenter(currentPosition, map.tileSize) === false) {
     return false;
   }
-  const { gridX, gridY } = getGridPosition(currentPosition, map.tileSize);
+  const { x: gridX, y: gridY } = getGridPosition(currentPosition, map.tileSize);
   switch (direction) {
     case "up":
       return map.map[gridY - 1][gridX] === 1;

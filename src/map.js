@@ -1,7 +1,7 @@
 // @ts-check
 
 import Map from "./objects/Map.js";
-import { tilesToWidth } from "./utils.js";
+import { calculateDistance } from "./utils.js";
 
 const neonPurple =
   getComputedStyle(document.documentElement)
@@ -22,10 +22,10 @@ const neonPurpleDark =
  * @param {number} gridY2 - ending Y position using grid coordinate
  */
 function drawWall(map, gridX, gridY, gridX2, gridY2) {
-  const x = tilesToWidth(gridX, map.tileSize);
-  const y = tilesToWidth(gridY, map.tileSize);
-  const width = tilesToWidth(gridX2 - gridX, map.tileSize);
-  const height = tilesToWidth(gridY2 - gridY, map.tileSize);
+  const x = calculateDistance(gridX, map.tileSize);
+  const y = calculateDistance(gridY, map.tileSize);
+  const width = calculateDistance(gridX2 - gridX, map.tileSize);
+  const height = calculateDistance(gridY2 - gridY, map.tileSize);
 
   if (x < 0 || y < 0) {
     throw new Error("drawWall: must be positive values.");
@@ -120,11 +120,11 @@ function drawGrid(map) {
   const ctx = map.ctx;
   ctx.globalAlpha = 0.2;
   for (let i = 0; i <= map.columns; i++) {
-    const x = tilesToWidth(i, map.tileSize);
+    const x = calculateDistance(i, map.tileSize);
     drawLine(ctx, x, 0, x, map.height);
   }
   for (let j = 0; j <= map.rows; j++) {
-    const y = tilesToWidth(j, map.tileSize);
+    const y = calculateDistance(j, map.tileSize);
     drawLine(ctx, 0, y, map.width, y);
   }
   ctx.globalAlpha = 1;

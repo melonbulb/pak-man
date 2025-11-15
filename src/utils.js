@@ -1,33 +1,52 @@
-// Covert grid coordinates to pixel coordinates (center of tile)
-function getPosition(tileX, tileY, tileSize) {
-  return {
-    x: tileX * tileSize + tileSize / 2,
-    y: tileY * tileSize + tileSize / 2,
-  };
-}
+// @ts-check
 
-// Covert pixel coordinates to grid coordinates
-function getGridPosition(position, tileSize) {
+/**
+ * Covert grid coordinates to pixel coordinates
+ * @param {GridCoordinate} gridPosition
+ * @param {number} gridSize
+ * @returns {PixelCoordinate} Coordinate to the center of the position grid
+ */
+function getPosition(gridPosition, gridSize) {
+  const { x, y } = gridPosition;
   return {
-    gridX: Math.floor(position.x / tileSize),
-    gridY: Math.floor(position.y / tileSize),
+    x: x * gridSize + gridSize / 2,
+    y: y * gridSize + gridSize / 2,
   };
-}
-
-function isTileCenter(position, tileSize) {
-  const { gridX, gridY } = getGridPosition(position, tileSize);
-  const centerX = gridX * tileSize + tileSize / 2;
-  const centerY = gridY * tileSize + tileSize / 2;
-  return position.x === centerX && position.y === centerY;
 }
 
 /**
- * calculate distance from origin to tile
- * @param {number} tilePosition
- * @returns
+ *
+ * @param {PixelCoordinate} coordinateObj
+ * @param {number} gridSize
+ * @returns {GridCoordinate}
  */
-function tilesToWidth(tilePosition, tileSize) {
-  return tilePosition * tileSize;
+function getGridPosition(coordinateObj, gridSize) {
+  return {
+    x: Math.floor(coordinateObj.x / gridSize),
+    y: Math.floor(coordinateObj.y / gridSize),
+  };
 }
 
-export { getPosition, getGridPosition, isTileCenter, tilesToWidth };
+/**
+ *
+ * @param {PixelCoordinate} coordinateObj
+ * @param {number} gridSize
+ * @returns
+ */
+function isTileCenter(coordinateObj, gridSize) {
+  const gridPosition = getGridPosition(coordinateObj, gridSize);
+  const { x: centerX, y: centerY } = getPosition(gridPosition, gridSize);
+  return coordinateObj.x === centerX && coordinateObj.y === centerY;
+}
+
+/**
+ * Calculate distance from origin to start of grid position
+ * @param {number} gridPosition
+ * @param {number} gridSize
+ * @returns
+ */
+function calculateDistance(gridPosition, gridSize) {
+  return gridPosition * gridSize;
+}
+
+export { getPosition, getGridPosition, isTileCenter, calculateDistance };
