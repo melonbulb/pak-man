@@ -1,5 +1,15 @@
+// @ts-check
+
+import Sprite from "./objects/Sprite.js";
 import { getGridPosition, isTileCenter } from "./utils.js";
 
+/**
+ *
+ * @param {GameMap} map
+ * @param {Direction} direction
+ * @param {SpritePosition} currentPosition
+ * @returns
+ */
 function isBlockedByWall(map, direction, currentPosition) {
   if (isTileCenter(currentPosition, map.tileSize) === false) {
     return false;
@@ -7,18 +17,24 @@ function isBlockedByWall(map, direction, currentPosition) {
   const { gridX, gridY } = getGridPosition(currentPosition, map.tileSize);
   switch (direction) {
     case "up":
-      return map.wallMap[gridY - 1][gridX] === 1;
+      return map.map[gridY - 1][gridX] === 1;
     case "down":
-      return map.wallMap[gridY + 1][gridX] === 1;
+      return map.map[gridY + 1][gridX] === 1;
     case "left":
-      return map.wallMap[gridY][gridX - 1] === 1;
+      return map.map[gridY][gridX - 1] === 1;
     case "right":
-      return map.wallMap[gridY][gridX + 1] === 1;
+      return map.map[gridY][gridX + 1] === 1;
     default:
       return false;
   }
 }
 
+/**
+ *
+ * @param {GameMap} map
+ * @param {Sprite} sprite
+ * @returns
+ */
 function updatePlayerPosition(map, sprite) {
   tryChangeDirection(map, sprite);
   const currentPosition = sprite.position;
@@ -70,6 +86,12 @@ function updatePlayerPosition(map, sprite) {
   return currentPosition;
 }
 
+/**
+ *
+ * @param {GameMap} map
+ * @param {Sprite} sprite
+ * @returns
+ */
 function tryChangeDirection(map, sprite) {
   const currentPosition = sprite.position;
   let requestedDirection = sprite.requestedDirection;

@@ -1,10 +1,7 @@
-let canvasWidth;
-let canvasHeight;
-let tileSize;
-let columnSize;
-let rowSize;
+// @ts-check
 
-let wallMap;
+import Map from "./objects/Map.js";
+import { tilesToWidth } from "./utils.js";
 
 const neonPurple =
   getComputedStyle(document.documentElement)
@@ -16,36 +13,40 @@ const neonPurpleDark =
     .getPropertyValue("--color-neon-purple-600")
     .trim() || "darkblue";
 
-// Utility function to convert tile count to pixel width
-function tilesToWidth(numTiles) {
-  return numTiles * tileSize;
-}
+/**
+ * Function to draw a wall with neon purple outline
+ * @param {Map} map
+ * @param {number} gridX - starting X position using grid coordinate
+ * @param {number} gridY - starting Y position using grid coordinate
+ * @param {number} gridX2 - ending X position using grid coordinate
+ * @param {number} gridY2 - ending Y position using grid coordinate
+ */
+function drawWall(map, gridX, gridY, gridX2, gridY2) {
+  const x = tilesToWidth(gridX, map.tileSize);
+  const y = tilesToWidth(gridY, map.tileSize);
+  const width = tilesToWidth(gridX2 - gridX, map.tileSize);
+  const height = tilesToWidth(gridY2 - gridY, map.tileSize);
 
-// Function to draw a wall with neon purple outline
-function drawWall(ctx, tileX, tileY, tileX2, tileY2) {
-  const x = tilesToWidth(tileX);
-  const y = tilesToWidth(tileY);
-  const width = tilesToWidth(tileX2 - tileX);
-  const height = tilesToWidth(tileY2 - tileY);
   if (x < 0 || y < 0) {
     throw new Error("drawWall: must be positive values.");
   }
 
   if (
-    width > canvasWidth ||
-    height > canvasHeight ||
-    x > canvasWidth ||
-    y > canvasHeight
+    width > map.width ||
+    height > map.height ||
+    x > map.width ||
+    y > map.height
   ) {
     throw new Error("drawWall: exceeds canvas boundaries.");
   }
 
-  for (let i = tileY; i < tileY2; i++) {
-    for (let j = tileX; j < tileX2; j++) {
-      wallMap[i][j] = 1;
+  for (let i = gridY; i < gridY2; i++) {
+    for (let j = gridX; j < gridX2; j++) {
+      map.addWall(j, i);
     }
   }
 
+  const ctx = map.ctx;
   ctx.globalAlpha = 0.1;
   ctx.fillStyle = neonPurpleDark;
   ctx.fillRect(x, y, width, height);
@@ -59,32 +60,49 @@ function drawWall(ctx, tileX, tileY, tileX2, tileY2) {
   ctx.strokeStyle = neonPurple;
   ctx.strokeRect(x + 10, y + 10, width - 20, height - 20);
 }
-
-function drawCubedWall(ctx, tileX, tileY) {
-  drawWall(ctx, tileX, tileY, tileX + 3, tileY + 3);
+/**
+ * Draws a cubed wall (3x3 tiles) on the given canvas context.
+ * @param {Map} map
+ * @param {number} tileX - starting X position using grid coordinate
+ * @param {number} tileY - starting Y position using grid coordinate
+ */
+function drawCubedWall(map, tileX, tileY) {
+  drawWall(map, tileX, tileY, tileX + 3, tileY + 3);
 }
 
-function drawOuterWalls(ctx) {
+/**
+ * Draws the outer walls on the given canvas context.
+ * @param {Map} map
+ */
+function drawOuterWalls(map) {
   //top wall and boottom wall
-  drawWall(ctx, 1, 0, columnSize - 1, 1);
-  drawWall(ctx, 1, rowSize - 1, columnSize - 1, rowSize);
+  drawWall(map, 1, 0, map.columns - 1, 1);
+  drawWall(map, 1, map.rows - 1, map.columns - 1, map.rows);
 
   //left wall
-  drawWall(ctx, 0, 0, 1, 7);
-  drawWall(ctx, 0, 8, 1, rowSize);
+  drawWall(map, 0, 0, 1, 7);
+  drawWall(map, 0, 8, 1, map.rows);
   // left entrance wall
-  drawWall(ctx, 1, 6, 3, 7);
-  drawWall(ctx, 1, 8, 3, 9);
+  drawWall(map, 1, 6, 3, 7);
+  drawWall(map, 1, 8, 3, 9);
 
   //right wall
-  drawWall(ctx, columnSize - 1, 0, columnSize, 7);
-  drawWall(ctx, columnSize - 1, 8, columnSize, rowSize);
+  drawWall(map, map.columns - 1, 0, map.columns, 7);
+  drawWall(map, map.columns - 1, 8, map.columns, map.rows);
 
   // right entrance wall
-  drawWall(ctx, columnSize - 3, 6, columnSize - 1, 7);
-  drawWall(ctx, columnSize - 3, 8, columnSize - 1, 9);
+  drawWall(map, map.columns - 3, 6, map.columns - 1, 7);
+  drawWall(map, map.columns - 3, 8, map.columns - 1, 9);
 }
 
+/**
+ * Draws a line on the given canvas context.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x1 - starting x coordinate
+ * @param {number} y1 - starting y coordinate
+ * @param {number} x2 - ending x coordinate
+ * @param {number} y2 - ending y coordinate
+ */
 function drawLine(ctx, x1, y1, x2, y2) {
   ctx.lineWidth = 2;
   ctx.strokeStyle = neonPurple;
@@ -94,80 +112,77 @@ function drawLine(ctx, x1, y1, x2, y2) {
   ctx.stroke();
 }
 
-function drawGrid(ctx) {
+/**
+ * Draws a grid on the given canvas context.
+ * @param {Map} map
+ */
+function drawGrid(map) {
+  const ctx = map.ctx;
   ctx.globalAlpha = 0.2;
-  for (let i = 0; i <= columnSize; i++) {
-    const x = tilesToWidth(i);
-    drawLine(ctx, x, 0, x, canvasHeight);
+  for (let i = 0; i <= map.columns; i++) {
+    const x = tilesToWidth(i, map.tileSize);
+    drawLine(ctx, x, 0, x, map.height);
   }
-  for (let j = 0; j <= rowSize; j++) {
-    const y = tilesToWidth(j);
-    drawLine(ctx, 0, y, canvasWidth, y);
+  for (let j = 0; j <= map.rows; j++) {
+    const y = tilesToWidth(j, map.tileSize);
+    drawLine(ctx, 0, y, map.width, y);
   }
   ctx.globalAlpha = 1;
 }
 
-function initialWallMap(columns, rows) {
-  const wallMap = [];
-  for (let y = 0; y < rows; y++) {
-    const row = [];
-    for (let x = 0; x < columns; x++) {
-      row.push(0);
-    }
-    wallMap.push(row);
-  }
-  return wallMap;
-}
-
-export function drawMap(ctx, config) {
-  canvasWidth = config.width;
-  canvasHeight = config.height;
-  tileSize = config.tileSize;
+/**
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {*} config
+ * @returns {{width: number, height: number, tileSize: number, map: number[][]}}
+ */
+function drawMap(ctx, config) {
+  const canvasWidth = config.width;
+  const canvasHeight = config.height;
+  const tileSize = config.tileSize;
 
   const includeGrid = config.includeGrid || false;
 
-  columnSize = canvasWidth / tileSize;
-  rowSize = canvasHeight / tileSize;
+  const map = new Map(ctx, canvasWidth, canvasHeight, tileSize);
 
-  wallMap = initialWallMap(columnSize, rowSize);
-
-  drawOuterWalls(ctx);
+  drawOuterWalls(map);
 
   // left cubed walls
-  drawCubedWall(ctx, 2, 2); //top
-  drawCubedWall(ctx, 2, 10); //bottom
-  drawCubedWall(ctx, 4, 6); //infront entrance
+  drawCubedWall(map, 2, 2); //top
+  drawCubedWall(map, 2, 10); //bottom
+  drawCubedWall(map, 4, 6); //infront entrance
 
   // right cubed walls
-  drawCubedWall(ctx, 15, 2); //top
-  drawCubedWall(ctx, 15, 10); //bottom
-  drawCubedWall(ctx, 13, 6); //infront entrance
+  drawCubedWall(map, 15, 2); //top
+  drawCubedWall(map, 15, 10); //bottom
+  drawCubedWall(map, 13, 6); //infront entrance
 
   // Top U bend shape walls
-  drawWall(ctx, 6, 2, 7, 5);
-  drawWall(ctx, 7, 2, 13, 3);
-  drawWall(ctx, 13, 2, 14, 5);
+  drawWall(map, 6, 2, 7, 5);
+  drawWall(map, 7, 2, 13, 3);
+  drawWall(map, 13, 2, 14, 5);
 
   //center fist shape walls
-  drawCubedWall(ctx, 9, 4); //center top
-  drawWall(ctx, 8, 4, 9, 7);
-  drawWall(ctx, 8, 8, 12, 9);
+  drawCubedWall(map, 9, 4); //center top
+  drawWall(map, 8, 4, 9, 7);
+  drawWall(map, 8, 8, 12, 9);
 
-  //   drawCubedWall(6, 10); //center bottom
-  drawWall(ctx, 6, 10, 8, 13);
+  drawWall(map, 6, 10, 8, 13);
 
   // spawner walls
-  drawWall(ctx, 13, 10, 14, 13);
-  drawWall(ctx, 10, 10, 13, 11);
-  drawWall(ctx, 9, 10, 10, 13);
-  drawWall(ctx, 10, 12, 12, 13);
+  drawWall(map, 13, 10, 14, 13);
+  drawWall(map, 10, 10, 13, 11);
+  drawWall(map, 9, 10, 10, 13);
+  drawWall(map, 10, 12, 12, 13);
 
-  includeGrid && drawGrid(ctx);
+  includeGrid && drawGrid(map);
 
   return {
     width: canvasWidth,
     height: canvasHeight,
     tileSize,
-    wallMap,
+    map: map.map,
   };
 }
+
+export { drawMap };

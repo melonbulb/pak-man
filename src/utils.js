@@ -21,4 +21,13 @@ function isTileCenter(position, tileSize) {
   return position.x === centerX && position.y === centerY;
 }
 
-export { getPosition, getGridPosition, isTileCenter };
+/**
+ * calculate distance from origin to tile
+ * @param {number} tilePosition
+ * @returns
+ */
+function tilesToWidth(tilePosition, tileSize) {
+  return tilePosition * tileSize;
+}
+
+export { getPosition, getGridPosition, isTileCenter, tilesToWidth };
