@@ -14,6 +14,16 @@ const canvas = document.getElementById("pakman");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
+const canvasMap = document.getElementById("pakman-map");
+canvasMap.width = canvasWidth;
+canvasMap.height = canvasHeight;
+
+document.documentElement.style.setProperty("--game-width", `${canvasWidth}px`);
+document.documentElement.style.setProperty(
+  "--game-height",
+  `${canvasHeight}px`
+);
+
 let requestedDirection = "none";
 
 window.addEventListener("keydown", (e) => {
@@ -37,28 +47,29 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-function render(ctx, sprite) {
+function render(ctx, sprite, map) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  const map = drawMap(ctx, {
-    width: canvasWidth,
-    height: canvasHeight,
-    tileSize,
-    includeGrid: true,
-  });
   sprite.drawPlayer(ctx, "yellow", playerSize);
   sprite.setRequestedDirection(requestedDirection);
   sprite.setPosition(updatePlayerPosition(map, sprite));
 }
 
-function gameLoop(ctx, sprite) {
-  render(ctx, sprite);
-  requestAnimationFrame(() => gameLoop(ctx, sprite));
+function gameLoop(ctx, sprite, map) {
+  render(ctx, sprite, map);
+  requestAnimationFrame(() => gameLoop(ctx, sprite, map));
 }
 
 function startGame() {
   const ctx = canvas.getContext("2d");
+  const mapCtx = canvasMap.getContext("2d");
+  const map = drawMap(mapCtx, {
+    width: canvasWidth,
+    height: canvasHeight,
+    tileSize,
+    includeGrid: true,
+  });
   const sprite = new Sprite(spawn, 1);
-  requestAnimationFrame(() => gameLoop(ctx, sprite));
+  requestAnimationFrame(() => gameLoop(ctx, sprite, map));
 }
 
 startGame();

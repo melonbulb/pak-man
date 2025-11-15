@@ -40,3 +40,20 @@ canvas {
 .instructions li {
   margin: 5px 0;
 }
+
+#game-container {
+  position: relative;
+  width: var(--game-width);
+  height: var(--game-height);
+}
+#pakman {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+}
+#pakman-map {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
