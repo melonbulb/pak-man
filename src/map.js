@@ -175,5 +175,10 @@ export function drawMap(ctx, config) {
 
   includeGrid && drawGrid(ctx);
 
-  return wallMap;
+  return {
+    width: canvasWidth,
+    height: canvasHeight,
+    tileSize,
+    wallMap,
+  };
 }

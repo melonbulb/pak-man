@@ -1,36 +1,35 @@
 import { getGridPosition, isTileCenter } from "./utils.js";
 
-function isBlockedByWall(map, direction, currentPosition, tileSize) {
-  if (isTileCenter(currentPosition, tileSize) === false) {
+function isBlockedByWall(map, direction, currentPosition) {
+  if (isTileCenter(currentPosition, map.tileSize) === false) {
     return false;
   }
-  const { gridX, gridY } = getGridPosition(
-    currentPosition.x,
-    currentPosition.y,
-    tileSize
-  );
+  const { gridX, gridY } = getGridPosition(currentPosition, map.tileSize);
   switch (direction) {
     case "up":
-      return map[gridY - 1][gridX] === 1;
+      return map.wallMap[gridY - 1][gridX] === 1;
     case "down":
-      return map[gridY + 1][gridX] === 1;
+      return map.wallMap[gridY + 1][gridX] === 1;
     case "left":
-      return map[gridY][gridX - 1] === 1;
+      return map.wallMap[gridY][gridX - 1] === 1;
     case "right":
-      return map[gridY][gridX + 1] === 1;
+      return map.wallMap[gridY][gridX + 1] === 1;
     default:
       return false;
   }
 }
 
-function updatePlayerPosition(map, sprite, tileSize, canvasWidth) {
-  tryChangeDirection(map, sprite, tileSize);
+function updatePlayerPosition(map, sprite) {
+  tryChangeDirection(map, sprite);
   const currentPosition = sprite.position;
   const direction = sprite.direction;
   const speed = sprite.speed;
+  const canvasWidth = map.width;
+  const tileSize = map.tileSize;
+
   switch (direction) {
     case "up":
-      if (isBlockedByWall(map, "up", currentPosition, tileSize) === false) {
+      if (isBlockedByWall(map, "up", currentPosition) === false) {
         return {
           x: currentPosition.x,
           y: currentPosition.y - speed,
@@ -38,7 +37,7 @@ function updatePlayerPosition(map, sprite, tileSize, canvasWidth) {
       }
       break;
     case "down":
-      if (isBlockedByWall(map, "down", currentPosition, tileSize) === false) {
+      if (isBlockedByWall(map, "down", currentPosition) === false) {
         return {
           x: currentPosition.x,
           y: currentPosition.y + speed,
@@ -49,7 +48,7 @@ function updatePlayerPosition(map, sprite, tileSize, canvasWidth) {
       if (currentPosition.x < -tileSize / 2) {
         return { x: canvasWidth + tileSize / 2, y: currentPosition.y };
       }
-      if (isBlockedByWall(map, "left", currentPosition, tileSize) === false) {
+      if (isBlockedByWall(map, "left", currentPosition) === false) {
         return {
           x: currentPosition.x - speed,
           y: currentPosition.y,
@@ -60,7 +59,7 @@ function updatePlayerPosition(map, sprite, tileSize, canvasWidth) {
       if (currentPosition.x > canvasWidth + tileSize / 2) {
         return { x: -tileSize / 2, y: currentPosition.y };
       }
-      if (isBlockedByWall(map, "right", currentPosition, tileSize) === false) {
+      if (isBlockedByWall(map, "right", currentPosition) === false) {
         return {
           x: currentPosition.x + speed,
           y: currentPosition.y,
@@ -71,19 +70,16 @@ function updatePlayerPosition(map, sprite, tileSize, canvasWidth) {
   return currentPosition;
 }
 
-function tryChangeDirection(map, sprite, tileSize) {
+function tryChangeDirection(map, sprite) {
   const currentPosition = sprite.position;
   let requestedDirection = sprite.requestedDirection;
   if (requestedDirection === "none") {
     return;
   }
-  if (isTileCenter(currentPosition, tileSize) === false) {
+  if (isTileCenter(currentPosition, map.tileSize) === false) {
     return;
   }
-  if (
-    isBlockedByWall(map, requestedDirection, currentPosition, tileSize) ===
-    false
-  ) {
+  if (isBlockedByWall(map, requestedDirection, currentPosition) === false) {
     sprite.setDirection(requestedDirection);
     sprite.setRequestedDirection("none");
   }

@@ -8,7 +8,6 @@ const canvasHeight = 600;
 const tileSize = 40;
 
 const playerSize = tileSize * 0.8;
-const speed = 1;
 const spawn = getPosition(5, 1, tileSize);
 
 const canvas = document.getElementById("pakman");
@@ -48,7 +47,7 @@ function render(ctx, sprite) {
   });
   sprite.drawPlayer(ctx, "yellow", playerSize);
   sprite.setRequestedDirection(requestedDirection);
-  sprite.setPosition(updatePlayerPosition(map, sprite, tileSize, canvasWidth));
+  sprite.setPosition(updatePlayerPosition(map, sprite));
 }
 
 function gameLoop(ctx, sprite) {

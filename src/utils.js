@@ -7,15 +7,15 @@ function getPosition(tileX, tileY, tileSize) {
 }
 
 // Covert pixel coordinates to grid coordinates
-function getGridPosition(x, y, tileSize) {
+function getGridPosition(position, tileSize) {
   return {
-    gridX: Math.floor(x / tileSize),
-    gridY: Math.floor(y / tileSize),
+    gridX: Math.floor(position.x / tileSize),
+    gridY: Math.floor(position.y / tileSize),
   };
 }
 
 function isTileCenter(position, tileSize) {
-  const { gridX, gridY } = getGridPosition(position.x, position.y, tileSize);
+  const { gridX, gridY } = getGridPosition(position, tileSize);
   const centerX = gridX * tileSize + tileSize / 2;
   const centerY = gridY * tileSize + tileSize / 2;
   return position.x === centerX && position.y === centerY;
