@@ -68,7 +68,7 @@ function startGame() {
     tileSize,
     includeGrid: true,
   });
-  const player = new Sprite(spawn, 1);
+  const player = new Sprite(spawn, 1, tileSize);
   requestAnimationFrame(() => gameLoop(ctx, player, map));
 }
 
