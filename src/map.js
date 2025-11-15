@@ -1,7 +1,10 @@
 // @ts-check
+// @ts-ignore
+/** @typedef {import("./types.js")} */
 
+import { drawCircle, drawLine } from "./draw.js";
 import Map from "./objects/Map.js";
-import { calculateDistance } from "./utils.js";
+import { calculateDistance, getPosition } from "./utils.js";
 
 const neonPurple =
   getComputedStyle(document.documentElement)
@@ -96,23 +99,6 @@ function drawOuterWalls(map) {
 }
 
 /**
- * Draws a line on the given canvas context.
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} x1 - starting x coordinate
- * @param {number} y1 - starting y coordinate
- * @param {number} x2 - ending x coordinate
- * @param {number} y2 - ending y coordinate
- */
-function drawLine(ctx, x1, y1, x2, y2) {
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = neonPurple;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-}
-
-/**
  * Draws a grid on the given canvas context.
  * @param {Map} map
  */
@@ -121,13 +107,54 @@ function drawGrid(map) {
   ctx.globalAlpha = 0.2;
   for (let i = 0; i <= map.columns; i++) {
     const x = calculateDistance(i, map.tileSize);
-    drawLine(ctx, x, 0, x, map.height);
+    drawLine(ctx, x, 0, x, map.height, neonPurple);
   }
   for (let j = 0; j <= map.rows; j++) {
     const y = calculateDistance(j, map.tileSize);
-    drawLine(ctx, 0, y, map.width, y);
+    drawLine(ctx, 0, y, map.width, y, neonPurple);
   }
   ctx.globalAlpha = 1;
+}
+
+/**
+ * Draw and add a power up to map
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Map} map
+ * @param {GridCoordinate} gridPosition
+ */
+function drawPowerUp(ctx, map, gridPosition) {
+  const added = map.tryToAddPowerUp(gridPosition);
+  if (!added) return;
+  drawCircle(
+    ctx,
+    "orange",
+    getPosition(gridPosition, map.tileSize),
+    map.tileSize * 0.2
+  );
+}
+
+/**
+ * Draw and add food pallets to map
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Map} map
+ * @returns {number} count of food pallets drawn
+ */
+function drawFoodPallets(ctx, map) {
+  let count = 0;
+  for (let column = 0; column < map.columns; column++) {
+    for (let row = 0; row < map.rows; row++) {
+      if (map.map[row][column] === 2) {
+        drawCircle(
+          ctx,
+          "white",
+          getPosition({ x: column, y: row }, map.tileSize),
+          map.tileSize * 0.1
+        );
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 /**
@@ -168,4 +195,23 @@ function drawMap(map, includeGrid = false) {
   includeGrid && drawGrid(map);
 }
 
-export { drawMap };
+/**
+ * Draws food pellets and power-ups on the map.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Map} map
+ */
+function drawFoodMap(ctx, map) {
+  drawPowerUp(ctx, map, { x: 1, y: 1 });
+  drawPowerUp(ctx, map, { x: 1, y: 13 });
+  drawPowerUp(ctx, map, { x: 18, y: 1 });
+  drawPowerUp(ctx, map, { x: 18, y: 13 });
+  drawPowerUp(ctx, map, { x: 9, y: 7 });
+  drawPowerUp(ctx, map, { x: 10, y: 9 });
+  drawPowerUp(ctx, map, { x: 5, y: 11 });
+  drawPowerUp(ctx, map, { x: 14, y: 11 });
+  drawPowerUp(ctx, map, { x: 14, y: 3 });
+
+  drawFoodPallets(ctx, map);
+}
+
+export { drawMap, drawFoodMap };

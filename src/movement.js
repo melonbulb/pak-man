@@ -1,11 +1,12 @@
 // @ts-check
 
+import Map from "./objects/Map.js";
 import Sprite from "./objects/Sprite.js";
 import { getGridPosition, isTileCenter } from "./utils.js";
 
 /**
  * Checks if there is a wall blocking the path in the direction
- * @param {{map: GameMap, direction: Direction, position: PixelCoordinate}} sprite
+ * @param {{map: Map, direction: Direction, position: PixelCoordinate}} sprite
  * @returns
  */
 function isBlockedByWall(sprite) {
@@ -74,6 +75,7 @@ function tryChangeDirection(sprite, requestedDirection) {
   if (isTileCenter(position, map.tileSize) === false) {
     return;
   }
+  sprite.eat();
   if (
     isBlockedByWall({
       map,

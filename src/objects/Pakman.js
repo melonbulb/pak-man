@@ -1,5 +1,6 @@
 // @ts-check
 
+import Map from "./Map.js";
 import Sprite from "./Sprite.js";
 
 /**
@@ -9,7 +10,7 @@ class PakMan extends Sprite {
   /**
    * Initialize new PakMan
    * @param {CanvasRenderingContext2D} ctx
-   * @param {GameMap} map
+   * @param {Map} map
    * @param {PixelCoordinate} position
    * @param {number} speed
    */
@@ -17,6 +18,9 @@ class PakMan extends Sprite {
     super(ctx, map, position, speed);
     this.size = map.tileSize * 0.8;
     this.color = color;
+    this.score = 0;
+    this.speedboost = 0;
+    this.activeBooster = 0;
   }
   /**
    * Draws the PakMan on the given canvas context.

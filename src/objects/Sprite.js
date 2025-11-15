@@ -5,6 +5,7 @@ import {
   isBlockedByWall,
   tryChangeDirection,
 } from "../movement.js";
+import Map from "./Map.js";
 
 /**
  * Represents a generic sprite in the game.
@@ -13,7 +14,7 @@ class Sprite {
   /**
    * Initialize new Sprite
    * @param {CanvasRenderingContext2D} ctx
-   * @param {GameMap} map
+   * @param {Map} map
    * @param {PixelCoordinate} position
    * @param {number} speed
    */
@@ -26,6 +27,10 @@ class Sprite {
     this.direction = /** @type {Direction} */ ("none");
     this.requestedDirection = /** @type {Direction} */ ("none");
     this.speed = speed;
+    this.baseSpeed = speed;
+    this.activeBooster = 0;
+    this.score = 0;
+    this.foodEaten = 0;
   }
 
   /**
@@ -45,6 +50,25 @@ class Sprite {
    */
   setDirection(direction) {
     this.direction = direction;
+  }
+
+  eat() {
+    const { gridPosition, map } = this;
+    if (map.removePowerUp(gridPosition)) {
+      this.foodEaten++;
+      this.score += 1000;
+      this.speed = 5;
+      this.activeBooster++;
+      setTimeout(() => {
+        this.activeBooster--;
+        if (this.activeBooster <= 0) {
+          this.speed = this.baseSpeed;
+        }
+      }, 5000);
+    } else if (map.removeFoodPellet(gridPosition)) {
+      this.foodEaten++;
+      this.score += 100;
+    }
   }
 
   /**
@@ -75,7 +99,7 @@ class Sprite {
       return;
     }
     position.x -= speed;
-    this.position = position;
+    this.setPosition(position);
     handleWalkingOffMap(this);
   }
 
@@ -86,7 +110,7 @@ class Sprite {
       return;
     }
     position.x += speed;
-    this.position = position;
+    this.setPosition(position);
     handleWalkingOffMap(this);
   }
 
@@ -96,7 +120,7 @@ class Sprite {
       return;
     }
     position.y -= speed;
-    this.position = position;
+    this.setPosition(position);
     handleWalkingOffMap(this);
   }
 
@@ -106,7 +130,7 @@ class Sprite {
       return;
     }
     position.y += speed;
-    this.position = position;
+    this.setPosition(position);
     handleWalkingOffMap(this);
   }
 }

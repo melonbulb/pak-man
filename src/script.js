@@ -1,9 +1,12 @@
 // @ts-check
+// @ts-ignore
+/** @typedef {import('./types.js')} */
 
-import { drawMap } from "./map.js";
+import { drawFoodMap, drawMap } from "./map.js";
 import { getPosition } from "./utils.js";
 import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
+import Sprite from "./objects/Sprite.js";
 
 const canvasWidth = 800;
 const canvasHeight = 600;
@@ -53,6 +56,31 @@ window.addEventListener("keydown", (e) => {
       break;
   }
 });
+/**
+ *
+ * @param {number} score
+ */
+function handleScoreUpdate(score) {
+  const scoreElement = document.getElementById("score-value");
+  if (scoreElement) {
+    scoreElement.textContent = score.toString();
+  }
+}
+
+/**
+ * Checks if the win condition is met and updates the DOM accordingly.
+ * @param {Sprite} sprite
+ * @param {Map} map
+ */
+function checkWinCondition(sprite, map) {
+  handleScoreUpdate(sprite.score);
+  if (sprite.foodEaten >= map.numberOfFoodPallets() + map.numberOfPowerUps) {
+    const winElement = document.getElementById("win");
+    if (winElement) {
+      winElement.textContent = "You win! 🎉";
+    }
+  }
+}
 
 /**
  *
@@ -60,8 +88,10 @@ window.addEventListener("keydown", (e) => {
  */
 function render(player) {
   player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  drawFoodMap(player.ctx, player.map);
   player.draw();
   player.move(requestedDirection);
+  checkWinCondition(player, player.map);
 }
 
 /**
@@ -85,8 +115,8 @@ function getCtx() {
 function startGame() {
   const { gameCtx, bgCtx } = getCtx();
   const map = new Map(bgCtx, canvasWidth, canvasHeight, tileSize);
-  const player = new PakMan(gameCtx, map, spawn, 1);
-  drawMap(map);
+  drawMap(map, true);
+  const player = new PakMan(gameCtx, map, spawn, 2);
   requestAnimationFrame(() => gameLoop(player));
 }
 

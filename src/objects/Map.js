@@ -21,6 +21,8 @@ class Map {
     this.tileSize = tileSize;
     this.columns = width / tileSize;
     this.rows = height / tileSize;
+    this.numberOfWalls = 0;
+    this.numberOfPowerUps = 0;
 
     this.map = this.initialMap(this.columns, this.rows);
   }
@@ -52,16 +54,18 @@ class Map {
     if (this.map[gridY][gridX] === 1) {
       throw new Error(`Wall already exists at position (${gridX}, ${gridY})`);
     }
+    this.numberOfWalls++;
     this.map[gridY][gridX] = 1;
   }
 
   /**
    * Removes a food pallet from tile
-   * @param {number} gridX
-   * @param {number} gridY
+   * @param {GridCoordinate} gridPosition
    * @returns {Boolean} - true when a food pallet was found
    */
-  removeFoodPellet(gridX, gridY) {
+  removeFoodPellet(gridPosition) {
+    const { x: gridX, y: gridY } = gridPosition;
+    // console.log(this.map[gridY][gridX]);
     if (this.map[gridY][gridX] === 2) {
       this.map[gridY][gridX] = 0; // Mark as empty space
       return true;
@@ -71,11 +75,12 @@ class Map {
 
   /**
    * Removes a power up from tile
-   * @param {number} gridX
-   * @param {number} gridY
+   * @param {GridCoordinate} gridPosition
    * @returns {Boolean} - true when a food pallet was found
    */
-  removePowerUp(gridX, gridY) {
+  removePowerUp(gridPosition) {
+    const { x: gridX, y: gridY } = gridPosition;
+    // console.log(this.map[gridY][gridX]);
     if (this.map[gridY][gridX] === 3) {
       this.map[gridY][gridX] = 0; // Mark as empty space
       return true;
@@ -85,16 +90,28 @@ class Map {
 
   /**
    * Marks a tile as containing a power-up in the wall map.
-   * @param {number} gridX
-   * @param {number} gridY
+   * @param {GridCoordinate} gridPosition
+   * @returns {Boolean} - true when power-up was added
    */
-  addPowerUp(gridX, gridY) {
+  tryToAddPowerUp(gridPosition) {
+    const { x: gridX, y: gridY } = gridPosition;
     if (this.map[gridY][gridX] === 1) {
       throw new Error(
         `Cannot place power-up on a wall at position (${gridX}, ${gridY})`
       );
     }
+    if (this.map[gridY][gridX] === 0) {
+      return false; // Do not place power-up on empty space
+    }
+    this.numberOfPowerUps++;
     this.map[gridY][gridX] = 3;
+    return true;
+  }
+
+  numberOfFoodPallets() {
+    return (
+      this.columns * this.rows - this.numberOfWalls - this.numberOfPowerUps
+    );
   }
 }
 
