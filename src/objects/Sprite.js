@@ -5,12 +5,14 @@
  */
 class Sprite {
   /**
-   *
+   * Initialize new Sprite
+   * @param {CanvasRenderingContext2D} ctx
    * @param {PixelCoordinate} position
    * @param {number} speed
    * @param {number} tileSize
    */
-  constructor(position, speed, tileSize) {
+  constructor(ctx, position, speed, tileSize) {
+    this.ctx = ctx;
     this.position = { x: 0, y: 0 };
     this.gridPosition = { x: 0, y: 0 };
     this.setPosition(position);

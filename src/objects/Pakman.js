@@ -7,25 +7,26 @@ import Sprite from "./Sprite.js";
  */
 class PakMan extends Sprite {
   /**
-   *
-   * @param {{x: number, y: number}} position
+   * Initialize new PakMan
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {PixelCoordinate} position
    * @param {number} speed
    * @param {number} tileSize
    */
-  constructor(position, speed, tileSize) {
-    super(position, speed, tileSize);
+  constructor(ctx, position, speed, tileSize, color = "yellow") {
+    super(ctx, position, speed, tileSize);
     this.size = tileSize * 0.8;
+    this.color = color;
   }
   /**
    * Draws the PakMan on the given canvas context.
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {string} color
    */
-  draw(ctx, color) {
+  draw() {
     if (!this.position || !this.position.x || !this.position.y) {
       throw new Error("Sprite position is not set properly");
     }
-    ctx.fillStyle = color;
+    const ctx = this.ctx;
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.size / 2, 0, Math.PI * 2);
     ctx.fill();

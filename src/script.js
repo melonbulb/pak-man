@@ -4,6 +4,7 @@ import { drawMap } from "./map.js";
 import { getPosition } from "./utils.js";
 import { updatePlayerPosition } from "./movement.js";
 import PakMan from "./objects/Pakman.js";
+import Map from "./objects/Map.js";
 
 const canvasWidth = 800;
 const canvasHeight = 600;
@@ -56,26 +57,24 @@ window.addEventListener("keydown", (e) => {
 
 /**
  *
- * @param {CanvasRenderingContext2D} ctx
  * @param {PakMan} player
  * @param {GameMap} map
  */
-function render(ctx, player, map) {
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  player.draw(ctx, "yellow");
+function render(player, map) {
+  player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  player.draw();
   player.setRequestedDirection(requestedDirection);
   player.setPosition(updatePlayerPosition(map, player));
 }
 
 /**
  *
- * @param {CanvasRenderingContext2D} ctx
  * @param {PakMan} player
  * @param {GameMap} map
  */
-function gameLoop(ctx, player, map) {
-  render(ctx, player, map);
-  requestAnimationFrame(() => gameLoop(ctx, player, map));
+function gameLoop(player, map) {
+  render(player, map);
+  requestAnimationFrame(() => gameLoop(player, map));
 }
 
 function getCtx() {
@@ -89,14 +88,10 @@ function getCtx() {
 
 function startGame() {
   const { gameCtx, bgCtx } = getCtx();
-  const map = drawMap(bgCtx, {
-    width: canvasWidth,
-    height: canvasHeight,
-    tileSize,
-    includeGrid: true,
-  });
-  const player = new PakMan(spawn, 1, tileSize);
-  requestAnimationFrame(() => gameLoop(gameCtx, player, map));
+  const map = new Map(bgCtx, canvasWidth, canvasHeight, tileSize);
+  const player = new PakMan(gameCtx, spawn, 1, tileSize);
+  drawMap(map);
+  requestAnimationFrame(() => gameLoop(player, map));
 }
 
 startGame();

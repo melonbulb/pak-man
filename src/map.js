@@ -132,19 +132,9 @@ function drawGrid(map) {
 
 /**
  *
- * @param {CanvasRenderingContext2D} ctx
- * @param {*} config
- * @returns {{width: number, height: number, tileSize: number, map: number[][]}}
+ * @param {Map} map
  */
-function drawMap(ctx, config) {
-  const canvasWidth = config.width;
-  const canvasHeight = config.height;
-  const tileSize = config.tileSize;
-
-  const includeGrid = config.includeGrid || false;
-
-  const map = new Map(ctx, canvasWidth, canvasHeight, tileSize);
-
+function drawMap(map, includeGrid = false) {
   drawOuterWalls(map);
 
   // left cubed walls
@@ -176,13 +166,6 @@ function drawMap(ctx, config) {
   drawWall(map, 10, 12, 12, 13);
 
   includeGrid && drawGrid(map);
-
-  return {
-    width: canvasWidth,
-    height: canvasHeight,
-    tileSize,
-    map: map.map,
-  };
 }
 
 export { drawMap };
