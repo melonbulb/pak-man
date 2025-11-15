@@ -4,17 +4,16 @@ import Sprite from "./objects/Sprite.js";
 import { getGridPosition, isTileCenter } from "./utils.js";
 
 /**
- *
- * @param {GameMap} map
- * @param {Direction} direction
- * @param {PixelCoordinate} currentPosition
+ * Checks if there is a wall blocking the path in the direction
+ * @param {{map: GameMap, direction: Direction, position: PixelCoordinate}} sprite
  * @returns
  */
-function isBlockedByWall(map, direction, currentPosition) {
-  if (isTileCenter(currentPosition, map.tileSize) === false) {
+function isBlockedByWall(sprite) {
+  const { map, direction, position } = sprite;
+  if (isTileCenter(position, map.tileSize) === false) {
     return false;
   }
-  const { x: gridX, y: gridY } = getGridPosition(currentPosition, map.tileSize);
+  const { x: gridX, y: gridY } = getGridPosition(position, map.tileSize);
   switch (direction) {
     case "up":
       return map.map[gridY - 1][gridX] === 1;
@@ -30,80 +29,59 @@ function isBlockedByWall(map, direction, currentPosition) {
 }
 
 /**
- *
- * @param {GameMap} map
+ * Handles the sprite walking off the map and wraps it around.
  * @param {Sprite} sprite
- * @returns
  */
-function updatePlayerPosition(map, sprite) {
-  tryChangeDirection(map, sprite);
-  const currentPosition = sprite.position;
-  const direction = sprite.direction;
-  const speed = sprite.speed;
-  const canvasWidth = map.width;
-  const tileSize = map.tileSize;
-
+function handleWalkingOffMap(sprite) {
+  const { position, map, direction } = sprite;
+  const { tileSize } = map;
   switch (direction) {
-    case "up":
-      if (isBlockedByWall(map, "up", currentPosition) === false) {
-        return {
-          x: currentPosition.x,
-          y: currentPosition.y - speed,
-        };
+    case "down":
+      if (position.y > map.height + tileSize / 2) {
+        sprite.setPosition({ x: position.x, y: -tileSize / 2 });
       }
       break;
-    case "down":
-      if (isBlockedByWall(map, "down", currentPosition) === false) {
-        return {
-          x: currentPosition.x,
-          y: currentPosition.y + speed,
-        };
+    case "up":
+      if (position.y < -tileSize / 2) {
+        sprite.setPosition({ x: position.x, y: map.height + tileSize / 2 });
       }
       break;
     case "left":
-      if (currentPosition.x < -tileSize / 2) {
-        return { x: canvasWidth + tileSize / 2, y: currentPosition.y };
-      }
-      if (isBlockedByWall(map, "left", currentPosition) === false) {
-        return {
-          x: currentPosition.x - speed,
-          y: currentPosition.y,
-        };
+      if (position.x < -tileSize / 2) {
+        sprite.setPosition({ x: map.width + tileSize / 2, y: position.y });
       }
       break;
     case "right":
-      if (currentPosition.x > canvasWidth + tileSize / 2) {
-        return { x: -tileSize / 2, y: currentPosition.y };
-      }
-      if (isBlockedByWall(map, "right", currentPosition) === false) {
-        return {
-          x: currentPosition.x + speed,
-          y: currentPosition.y,
-        };
+      if (position.x > map.width + tileSize / 2) {
+        sprite.setPosition({ x: -tileSize / 2, y: position.y });
       }
       break;
   }
-  return currentPosition;
 }
 
 /**
- *
- * @param {GameMap} map
+ * Changes the sprite direction when conditions are met:
+ * - sprite is at the tile center
+ * - sprite is not blocked by wall
  * @param {Sprite} sprite
- * @returns
+ * @param {Direction} requestedDirection
  */
-function tryChangeDirection(map, sprite) {
-  const currentPosition = sprite.position;
-  let requestedDirection = sprite.requestedDirection;
+function tryChangeDirection(sprite, requestedDirection) {
+  const { map, position } = sprite;
   if (requestedDirection === "none") {
     return;
   }
-  if (isTileCenter(currentPosition, map.tileSize) === false) {
+  if (isTileCenter(position, map.tileSize) === false) {
     return;
   }
-  if (isBlockedByWall(map, requestedDirection, currentPosition) === false) {
+  if (
+    isBlockedByWall({
+      map,
+      direction: requestedDirection,
+      position,
+    }) === false
+  ) {
     sprite.setDirection(requestedDirection);
-    sprite.setRequestedDirection("none");
   }
 }
-export { updatePlayerPosition };
+export { isBlockedByWall, tryChangeDirection, handleWalkingOffMap };

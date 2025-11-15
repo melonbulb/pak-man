@@ -2,7 +2,6 @@
 
 import { drawMap } from "./map.js";
 import { getPosition } from "./utils.js";
-import { updatePlayerPosition } from "./movement.js";
 import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
 
@@ -58,23 +57,20 @@ window.addEventListener("keydown", (e) => {
 /**
  *
  * @param {PakMan} player
- * @param {GameMap} map
  */
-function render(player, map) {
+function render(player) {
   player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   player.draw();
-  player.setRequestedDirection(requestedDirection);
-  player.setPosition(updatePlayerPosition(map, player));
+  player.move(requestedDirection);
 }
 
 /**
  *
  * @param {PakMan} player
- * @param {GameMap} map
  */
-function gameLoop(player, map) {
-  render(player, map);
-  requestAnimationFrame(() => gameLoop(player, map));
+function gameLoop(player) {
+  render(player);
+  requestAnimationFrame(() => gameLoop(player));
 }
 
 function getCtx() {
@@ -89,9 +85,9 @@ function getCtx() {
 function startGame() {
   const { gameCtx, bgCtx } = getCtx();
   const map = new Map(bgCtx, canvasWidth, canvasHeight, tileSize);
-  const player = new PakMan(gameCtx, spawn, 1, tileSize);
+  const player = new PakMan(gameCtx, map, spawn, 1);
   drawMap(map);
-  requestAnimationFrame(() => gameLoop(player, map));
+  requestAnimationFrame(() => gameLoop(player));
 }
 
 startGame();

@@ -9,20 +9,24 @@ class PakMan extends Sprite {
   /**
    * Initialize new PakMan
    * @param {CanvasRenderingContext2D} ctx
+   * @param {GameMap} map
    * @param {PixelCoordinate} position
    * @param {number} speed
-   * @param {number} tileSize
    */
-  constructor(ctx, position, speed, tileSize, color = "yellow") {
-    super(ctx, position, speed, tileSize);
-    this.size = tileSize * 0.8;
+  constructor(ctx, map, position, speed, color = "yellow") {
+    super(ctx, map, position, speed);
+    this.size = map.tileSize * 0.8;
     this.color = color;
   }
   /**
    * Draws the PakMan on the given canvas context.
    */
   draw() {
-    if (!this.position || !this.position.x || !this.position.y) {
+    if (
+      !this.position ||
+      this.position.x === undefined ||
+      this.position.y === undefined
+    ) {
       throw new Error("Sprite position is not set properly");
     }
     const ctx = this.ctx;
