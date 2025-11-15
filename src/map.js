@@ -1,14 +1,3 @@
-// const canvasWidth = 800;
-// const canvasHeight = 600;
-// const tileSize = 40;
-// const maxTilesX = canvasWidth / tileSize;
-// const maxTilesY = canvasHeight / tileSize;
-
-// const canvas = document.getElementById("pakman");
-// canvas.width = canvasWidth;
-// canvas.height = canvasHeight;
-// const ctx = canvas.getContext("2d");
-
 let canvasWidth;
 let canvasHeight;
 let tileSize;
