@@ -47,16 +47,16 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-function render(ctx, sprite, map) {
+function render(ctx, player, map) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  sprite.drawPlayer(ctx, "yellow", playerSize);
-  sprite.setRequestedDirection(requestedDirection);
-  sprite.setPosition(updatePlayerPosition(map, sprite));
+  player.drawPlayer(ctx, "yellow", playerSize);
+  player.setRequestedDirection(requestedDirection);
+  player.setPosition(updatePlayerPosition(map, player));
 }
 
-function gameLoop(ctx, sprite, map) {
-  render(ctx, sprite, map);
-  requestAnimationFrame(() => gameLoop(ctx, sprite, map));
+function gameLoop(ctx, player, map) {
+  render(ctx, player, map);
+  requestAnimationFrame(() => gameLoop(ctx, player, map));
 }
 
 function startGame() {
@@ -68,8 +68,8 @@ function startGame() {
     tileSize,
     includeGrid: true,
   });
-  const sprite = new Sprite(spawn, 1);
-  requestAnimationFrame(() => gameLoop(ctx, sprite, map));
+  const player = new Sprite(spawn, 1);
+  requestAnimationFrame(() => gameLoop(ctx, player, map));
 }
 
 startGame();
