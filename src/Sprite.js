@@ -1,7 +1,8 @@
 class Sprite {
-  constructor(position, speed) {
-    this.position = position;
+  constructor(position, speed, tileSize) {
+    this.setPosition(position);
     this.direction = "none";
+    this.tileSize = tileSize;
     this.speed = speed;
   }
 
@@ -14,6 +15,9 @@ class Sprite {
 
   setPosition(position) {
     this.position = position;
+    const gridX = Math.floor(position.x / this.tileSize);
+    const gridY = Math.floor(position.y / this.tileSize);
+    this.gridPosition = { x: gridX, y: gridY };
   }
 
   setRequestedDirection(direction) {
