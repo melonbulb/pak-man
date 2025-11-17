@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @import { GridCoordinate, PixelCoordinate } from './types.js';
+ * @import { GridCoordinate, PixelCoordinate } from '../types.js';
  */
 
 /**

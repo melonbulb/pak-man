@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * @import { PixelCoordinate } from './types.js';
+ * @import { PixelCoordinate } from '../types.js';
  */
 
 /**
@@ -25,14 +25,18 @@ function drawCircle(ctx, color, position, radius) {
  * @param {number} x2 - ending x coordinate
  * @param {number} y2 - ending y coordinate
  * @param {string} color - line color
+ * @param {number} lineWidth - line width
+ * @param {number} transparency - transparency level from 0 to 1
  */
-function drawLine(ctx, x1, y1, x2, y2, color) {
-  ctx.lineWidth = 2;
+function drawLine(ctx, x1, y1, x2, y2, color, lineWidth = 1, transparency = 1) {
+  ctx.globalAlpha = transparency;
+  ctx.lineWidth = lineWidth;
   ctx.strokeStyle = color;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
   ctx.stroke();
+  ctx.globalAlpha = 1;
 }
 
 /**
@@ -43,20 +47,43 @@ function drawLine(ctx, x1, y1, x2, y2, color) {
  * @param {number} x2 - ending x position coordinate
  * @param {number} y2 - ending y position coordinate
  * @param {string} color - fill color
+ * @param {number} transparency - transparency level from 0 to 1
+ * @param {"fill"|"stroke"|"double-stroke"} style - "fill" or "stroke"
  */
-function drawRectangle(ctx, x1, y1, x2, y2, color) {
-  ctx.globalAlpha = 0.1;
+function drawRectangle(
+  ctx,
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  transparency = 1,
+  style = "fill",
+  lineWidth = 2
+) {
+  ctx.globalAlpha = transparency;
   ctx.fillStyle = color;
-  ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
-
+  switch (style) {
+    case "fill":
+      ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
+      break;
+    case "stroke":
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = color;
+      ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+      break;
+    case "double-stroke":
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = color;
+      ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = color;
+      ctx.strokeRect(x1 + 10, y1 + 10, x2 - x1 - 20, y2 - y1 - 20);
+      break;
+    default:
+      throw new Error(`drawRectangle: unknown style "${style}"`);
+  }
   ctx.globalAlpha = 1;
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = color;
-  ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
-
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = color;
-  ctx.strokeRect(x1 + 10, y1 + 10, x2 - x1 - 20, y2 - y1 - 20);
 }
 
 export { drawCircle, drawLine, drawRectangle };

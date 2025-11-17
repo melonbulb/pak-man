@@ -6,10 +6,11 @@
  */
 
 import { drawFoodMap, drawMap } from "./map.js";
-import { getPosition } from "./utils.js";
+import { getPosition } from "./utils/coordinate.js";
 import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
 import Sprite from "./objects/Sprite.js";
+import MapRenderer from "./objects/MapRenderer.js";
 
 const canvasWidth = 800;
 const canvasHeight = 600;
@@ -91,9 +92,10 @@ function checkWinCondition(sprite, map) {
  */
 function render(player) {
   player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  drawFoodMap(player.ctx, player.map);
+  drawFoodMap(player.map);
   player.draw();
   player.move(requestedDirection);
+  player.eat();
   checkWinCondition(player, player.map);
 }
 
@@ -117,7 +119,13 @@ function getCtx() {
 
 function startGame() {
   const { gameCtx, bgCtx } = getCtx();
-  const map = new Map(bgCtx, canvasWidth, canvasHeight, tileSize);
+  const map = new MapRenderer(
+    bgCtx,
+    gameCtx,
+    canvasWidth,
+    canvasHeight,
+    tileSize
+  );
   drawMap(map, true);
   const player = new PakMan(gameCtx, map, spawn, 2);
   requestAnimationFrame(() => gameLoop(player));

@@ -3,7 +3,8 @@
 /**
  * @import { PixelCoordinate } from '../types.js';
  */
-import Map from "./Map.js";
+import { isTileCenter } from "../utils/coordinate.js";
+import MapRenderer from "./MapRenderer.js";
 import Sprite from "./Sprite.js";
 
 /**
@@ -13,7 +14,7 @@ class PakMan extends Sprite {
   /**
    * Initialize new PakMan
    * @param {CanvasRenderingContext2D} ctx
-   * @param {Map} map
+   * @param {MapRenderer} map
    * @param {PixelCoordinate} position
    * @param {number} speed
    */
@@ -22,8 +23,6 @@ class PakMan extends Sprite {
     this.size = map.tileSize * 0.8;
     this.color = color;
     this.score = 0;
-    this.speedboost = 0;
-    this.activeBooster = 0;
   }
   /**
    * Draws the PakMan on the given canvas context.
@@ -41,6 +40,28 @@ class PakMan extends Sprite {
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.size / 2, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  eat() {
+    const { gridPosition, map } = this;
+    if (!isTileCenter(this.position, map.tileSize)) {
+      return;
+    }
+    if (map.removePowerUp(gridPosition)) {
+      this.foodEaten++;
+      this.score += 1000;
+      this.speed = 5;
+      this.activeBooster++;
+      setTimeout(() => {
+        this.activeBooster--;
+        if (this.activeBooster <= 0) {
+          this.speed = this.baseSpeed;
+        }
+      }, 5000);
+    } else if (map.removeFoodPellet(gridPosition)) {
+      this.foodEaten++;
+      this.score += 100;
+    }
   }
 }
 export default PakMan;
