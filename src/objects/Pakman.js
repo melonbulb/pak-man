@@ -23,6 +23,7 @@ class PakMan extends Sprite {
     this.size = map.tileSize * 0.8;
     this.color = color;
     this.score = 0;
+    this.foodEaten = 0;
   }
   /**
    * Draws the PakMan on the given canvas context.

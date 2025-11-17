@@ -5,7 +5,7 @@
  * @import { Direction } from './types.js';
  */
 
-import { drawFoodMap, drawMap } from "./map.js";
+import { drawFoodMap, drawMap } from "./customMap.js";
 import { getPosition } from "./utils/coordinate.js";
 import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
@@ -73,12 +73,12 @@ function handleScoreUpdate(score) {
 
 /**
  * Checks if the win condition is met and updates the DOM accordingly.
- * @param {Sprite} sprite
+ * @param {PakMan} player
  * @param {Map} map
  */
-function checkWinCondition(sprite, map) {
-  handleScoreUpdate(sprite.score);
-  if (sprite.foodEaten >= map.numberOfFoodPallets() + map.numberOfPowerUps) {
+function checkWinCondition(player, map) {
+  handleScoreUpdate(player.score);
+  if (player.foodEaten >= map.numberOfFoodPallets() + map.numberOfPowerUps) {
     const winElement = document.getElementById("win");
     if (winElement) {
       winElement.textContent = "You win! 🎉";

@@ -33,8 +33,6 @@ class Sprite {
     this.speed = speed;
     this.baseSpeed = speed;
     this.activeBooster = 0;
-    this.score = 0;
-    this.foodEaten = 0;
   }
 
   /**
