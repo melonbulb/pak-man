@@ -1,0 +1,23 @@
+{
+  "name": "pak-man",
+  "version": "1.0.0",
+  "description": "Game inspired by the classic Pac-Man arcade experience.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/melonbulb/pak-man.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/melonbulb/pak-man/issues"
+  },
+  "homepage": "https://github.com/melonbulb/pak-man#readme",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
