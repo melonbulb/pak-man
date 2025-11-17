@@ -1,5 +1,9 @@
 // @ts-check
 
+/**
+ * @import { PixelCoordinate, Direction } from '../types.js';
+ */
+
 import {
   handleWalkingOffMap,
   isBlockedByWall,

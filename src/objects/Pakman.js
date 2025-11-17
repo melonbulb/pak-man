@@ -1,5 +1,8 @@
 // @ts-check
 
+/**
+ * @import { PixelCoordinate } from '../types.js';
+ */
 import Map from "./Map.js";
 import Sprite from "./Sprite.js";
 

@@ -1,5 +1,9 @@
 // @ts-check
 
+/**
+ * @import { Direction, PixelCoordinate } from './types.js';
+ */
+
 import Map from "./objects/Map.js";
 import Sprite from "./objects/Sprite.js";
 import { getGridPosition, isTileCenter } from "./utils.js";

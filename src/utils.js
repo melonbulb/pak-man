@@ -1,6 +1,10 @@
 // @ts-check
 
 /**
+ * @import { GridCoordinate, PixelCoordinate } from './types.js';
+ */
+
+/**
  * Covert grid coordinates to pixel coordinates
  * @param {GridCoordinate} gridPosition
  * @param {number} gridSize

@@ -1,4 +1,7 @@
 // @ts-check
+/**
+ * @import { PixelCoordinate } from './types.js';
+ */
 
 /**
  * Draw a circle

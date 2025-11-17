@@ -1,6 +1,9 @@
 // @ts-check
 // @ts-ignore
-/** @typedef {import("./types.js")} */
+
+/**
+ * @import { GridCoordinate } from './types.js';
+ */
 
 import { drawCircle, drawLine } from "./draw.js";
 import Map from "./objects/Map.js";

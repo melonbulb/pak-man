@@ -1,6 +1,9 @@
 // @ts-check
 // @ts-ignore
-/** @typedef {import('./types.js')} */
+
+/**
+ * @import { Direction } from './types.js';
+ */
 
 import { drawFoodMap, drawMap } from "./map.js";
 import { getPosition } from "./utils.js";

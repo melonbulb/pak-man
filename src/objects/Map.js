@@ -1,6 +1,10 @@
 // @ts-check
 
 /**
+ * @import { GridCoordinate } from '../types.js';
+ */
+
+/**
  * Represents the map of the game
  * 0 - empty space
  * 1 - wall

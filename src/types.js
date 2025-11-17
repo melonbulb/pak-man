@@ -15,3 +15,5 @@
 /**
  * @typedef {"up" | "down" | "left" | "right" | "none"} Direction
  */
+
+export {};
