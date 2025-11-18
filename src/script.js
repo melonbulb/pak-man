@@ -121,14 +121,14 @@ function render(player, ghosts = []) {
  */
 function gameLoop(player, ghosts = []) {
   render(player, ghosts);
-  for (const ghost of ghosts) {
-    if (player.checkCollision(ghost)) {
-      updateStatus("You died!");
-      return;
-    }
-  }
-  !checkWinCondition(player, player.map) &&
+  if (checkWinCondition(player, player.map)) {
+    return;
+  } else if (ghosts.some((ghost) => player.checkCollision(ghost))) {
+    updateStatus("You died!");
+    return;
+  } else {
     requestAnimationFrame(() => gameLoop(player, ghosts));
+  }
 }
 
 function getCtx() {
@@ -155,7 +155,7 @@ function startGame() {
     gameCtx,
     map,
     getPosition({ x: 5, y: 5 }, tileSize),
-    2,
+    0.1,
     "pink"
   );
   gameLoop(player, [ali]);

@@ -20,12 +20,12 @@ class Ghost extends Sprite {
    * @param {MapRenderer} map
    * @param {PixelCoordinate} position
    * @param {number} speed
+   * @param {string} color
    */
   constructor(ctx, map, position, speed, color = "red") {
     super(ctx, map, position, speed);
     this.size = map.tileSize * 0.8;
     this.color = color;
-    this.speed = 0.5;
   }
   /**
    * Draws the PakMan on the given canvas context.
