@@ -74,6 +74,7 @@ function handleWalkingOffMap(sprite) {
 function tryChangeDirection(sprite, requestedDirection) {
   const { map, position } = sprite;
   if (requestedDirection === "none") {
+    sprite.setDirection("none");
     return;
   }
   if (isTileCenter(position, map.tileSize) === false) {
