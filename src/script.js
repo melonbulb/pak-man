@@ -155,7 +155,7 @@ function startGame() {
     gameCtx,
     map,
     getPosition({ x: 5, y: 5 }, tileSize),
-    0.1,
+    0.5,
     "pink"
   );
   gameLoop(player, [ali]);

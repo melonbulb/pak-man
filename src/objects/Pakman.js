@@ -42,16 +42,16 @@ class PakMan extends Sprite {
     if (!isTileCenter(this.position, map.tileSize)) {
       return;
     }
+    if (this.activeBooster === 0) {
+      this.speed = this.baseSpeed;
+    }
     if (map.removePowerUp(gridPosition)) {
       this.foodEaten++;
       this.score += 1000;
-      this.speed = 5;
       this.activeBooster++;
+      this.speed = 5;
       setTimeout(() => {
         this.activeBooster--;
-        if (this.activeBooster <= 0) {
-          this.speed = this.baseSpeed;
-        }
       }, 5000);
     } else if (map.removeFoodPellet(gridPosition)) {
       this.foodEaten++;
@@ -71,7 +71,6 @@ class PakMan extends Sprite {
     const collisionDistance = (this.size + ghost.size) / 2;
     const collisionDistanceSquared = collisionDistance * collisionDistance;
     if (distanceSquared < collisionDistanceSquared) {
-      console.log("Collision detected between PakMan and Ghost");
       return true;
     }
     return false;
