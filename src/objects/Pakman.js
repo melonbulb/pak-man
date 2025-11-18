@@ -4,6 +4,7 @@
  * @import { PixelCoordinate } from '../types.js';
  */
 import { isTileCenter } from "../utils/coordinate.js";
+import Ghost from "./Ghost.js";
 import MapRenderer from "./MapRenderer.js";
 import Sprite from "./Sprite.js";
 
@@ -29,13 +30,6 @@ class PakMan extends Sprite {
    * Draws the PakMan on the given canvas context.
    */
   draw() {
-    if (
-      !this.position ||
-      this.position.x === undefined ||
-      this.position.y === undefined
-    ) {
-      throw new Error("Sprite position is not set properly");
-    }
     const ctx = this.ctx;
     ctx.fillStyle = this.color;
     ctx.beginPath();
@@ -63,6 +57,24 @@ class PakMan extends Sprite {
       this.foodEaten++;
       this.score += 100;
     }
+  }
+
+  /**
+   * Checks collision between two sprites
+   * @param {Ghost} ghost
+   * @returns {boolean}
+   */
+  checkCollision(ghost) {
+    const distanceX = this.position.x - ghost.position.x;
+    const distanceY = this.position.y - ghost.position.y;
+    const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+    const collisionDistance = (this.size + ghost.size) / 2;
+    const collisionDistanceSquared = collisionDistance * collisionDistance;
+    if (distanceSquared < collisionDistanceSquared) {
+      console.log("Collision detected between PakMan and Ghost");
+      return true;
+    }
+    return false;
   }
 }
 export default PakMan;

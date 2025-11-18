@@ -56,10 +56,10 @@ class Sprite {
 
   /**
    * Moves sprite based on sprite current direction
-   * @param {Direction} requestedDirection
+   * @param {Direction} [requestedDirection] The requested direction to change to
    */
   move(requestedDirection) {
-    tryChangeDirection(this, requestedDirection);
+    requestedDirection && tryChangeDirection(this, requestedDirection);
     switch (this.direction) {
       case "up":
         this.moveUp();

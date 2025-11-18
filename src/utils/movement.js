@@ -89,4 +89,54 @@ function tryChangeDirection(sprite, requestedDirection) {
     sprite.setDirection(requestedDirection);
   }
 }
-export { isBlockedByWall, tryChangeDirection, handleWalkingOffMap };
+
+/**
+ * Checks possible directions the sprite can move to
+ * @param {Sprite} sprite
+ * @returns {Array<Direction>} directions
+ */
+function checkPossibleDirections(sprite) {
+  const { map, position } = sprite;
+  if (isTileCenter(position, map.tileSize) === false) {
+    return [];
+  }
+  const availableDirections = /**@type {Array<Direction>}*/ ([
+    "up",
+    "down",
+    "left",
+    "right",
+    "none",
+  ]);
+  const possibleDirections = availableDirections.filter((dir) => {
+    return (
+      isBlockedByWall({
+        map,
+        direction: /**@type {Direction} */ (dir),
+        position,
+      }) === false
+    );
+  });
+
+  return possibleDirections;
+}
+
+/**
+ * Gets a random direction from possible directions
+ * @param {Array<Direction>} possibleDirections
+ * @returns {Direction}
+ */
+function getRandomDirection(possibleDirections) {
+  if (possibleDirections.length === 0) {
+    return "none";
+  }
+  const randomIndex = Math.floor(Math.random() * possibleDirections.length);
+  return possibleDirections[randomIndex];
+}
+
+export {
+  isBlockedByWall,
+  tryChangeDirection,
+  handleWalkingOffMap,
+  checkPossibleDirections,
+  getRandomDirection,
+};

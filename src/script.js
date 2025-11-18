@@ -11,6 +11,7 @@ import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
 import Sprite from "./objects/Sprite.js";
 import MapRenderer from "./objects/MapRenderer.js";
+import Ghost from "./objects/Ghost.js";
 
 const canvasWidth = 800;
 const canvasHeight = 600;
@@ -72,6 +73,17 @@ function handleScoreUpdate(score) {
 }
 
 /**
+ * Updates the status message in the DOM
+ * @param {string} message
+ */
+function updateStatus(message) {
+  const winElement = document.getElementById("win");
+  if (winElement) {
+    winElement.textContent = message;
+  }
+}
+
+/**
  * Checks if the win condition is met and updates the DOM accordingly.
  * @param {PakMan} player
  * @param {Map} map
@@ -79,33 +91,44 @@ function handleScoreUpdate(score) {
 function checkWinCondition(player, map) {
   handleScoreUpdate(player.score);
   if (player.foodEaten >= map.numberOfFoodPallets() + map.numberOfPowerUps) {
-    const winElement = document.getElementById("win");
-    if (winElement) {
-      winElement.textContent = "You win! 🎉";
-    }
+    updateStatus("You Win!");
+    return true;
   }
+  return false;
 }
 
 /**
  *
  * @param {PakMan} player
+ * @param {Array<Ghost>} ghosts
  */
-function render(player) {
+function render(player, ghosts = []) {
   player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   drawFoodMap(player.map);
   player.draw();
   player.move(requestedDirection);
   player.eat();
-  checkWinCondition(player, player.map);
+  ghosts.forEach((ghost) => {
+    ghost.draw();
+    ghost.move();
+  });
 }
 
 /**
  *
  * @param {PakMan} player
+ * @param {Array<Ghost>} ghosts
  */
-function gameLoop(player) {
-  render(player);
-  requestAnimationFrame(() => gameLoop(player));
+function gameLoop(player, ghosts = []) {
+  render(player, ghosts);
+  for (const ghost of ghosts) {
+    if (player.checkCollision(ghost)) {
+      updateStatus("You died!");
+      return;
+    }
+  }
+  !checkWinCondition(player, player.map) &&
+    requestAnimationFrame(() => gameLoop(player, ghosts));
 }
 
 function getCtx() {
@@ -128,7 +151,14 @@ function startGame() {
   );
   drawMap(map, true);
   const player = new PakMan(gameCtx, map, spawn, 2);
-  requestAnimationFrame(() => gameLoop(player));
+  const ali = new Ghost(
+    gameCtx,
+    map,
+    getPosition({ x: 5, y: 5 }, tileSize),
+    2,
+    "pink"
+  );
+  gameLoop(player, [ali]);
 }
 
 startGame();
