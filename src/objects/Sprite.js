@@ -1,0 +1,120 @@
+// @ts-check
+
+/**
+ * @import { PixelCoordinate, Direction } from '../types.js';
+ */
+
+import { getGridPosition } from "../utils/coordinate.js";
+import {
+  handleWalkingOffMap,
+  isBlockedByWall,
+  tryChangeDirection,
+} from "../utils/movement.js";
+import MapRenderer from "./MapRenderer.js";
+
+/**
+ * Represents a generic sprite in the game.
+ */
+class Sprite {
+  /**
+   * Initialize new Sprite
+   * @param {MapRenderer} map
+   * @param {PixelCoordinate} position
+   * @param {number} speed
+   */
+  constructor(map, position, speed) {
+    this.map = map;
+    this.position = { x: 0, y: 0 };
+    this.gridPosition = { x: 0, y: 0 };
+    this.setPosition(position);
+    this.direction = /** @type {Direction} */ ("none");
+    this.requestedDirection = /** @type {Direction} */ ("none");
+    this.speed = speed;
+    this.baseSpeed = speed;
+    this.activeBooster = 0;
+  }
+
+  /**
+   * Updates the pixel and grid position based on the given pixel position.
+   * @param {PixelCoordinate} position
+   */
+  setPosition(position) {
+    this.position = position;
+    this.gridPosition = getGridPosition(position, this.map.tileSize);
+  }
+
+  /**
+   * Sets the current direction for the sprite.
+   * @param {Direction} direction
+   */
+  setDirection(direction) {
+    this.direction = direction;
+  }
+
+  /**
+   * Moves sprite based on sprite current direction
+   * @param {Direction} [requestedDirection] The requested direction to change to
+   */
+  move(requestedDirection) {
+    requestedDirection && tryChangeDirection(this, requestedDirection);
+    if (this.activeBooster === 0) {
+      this.speed = this.baseSpeed;
+    }
+    switch (this.direction) {
+      case "up":
+        this.moveUp();
+        break;
+      case "down":
+        this.moveDown();
+        break;
+      case "left":
+        this.moveLeft();
+        break;
+      case "right":
+        this.moveRight();
+        break;
+    }
+  }
+
+  moveLeft() {
+    const { position, speed } = this;
+    if (isBlockedByWall(this) === true) {
+      return;
+    }
+    position.x -= speed;
+    this.setPosition(position);
+    handleWalkingOffMap(this);
+  }
+
+  moveRight() {
+    const { position, speed } = this;
+    if (isBlockedByWall(this) === true) {
+      return;
+    }
+    position.x += speed;
+    this.setPosition(position);
+    handleWalkingOffMap(this);
+  }
+
+  moveUp() {
+    const { position, speed } = this;
+    if (isBlockedByWall(this) === true) {
+      return;
+    }
+    position.y -= speed;
+    this.setPosition(position);
+    handleWalkingOffMap(this);
+  }
+
+  moveDown() {
+    const { position, speed } = this;
+    if (isBlockedByWall(this) === true) {
+      return;
+    }
+    position.y += speed;
+    this.setPosition(position);
+    handleWalkingOffMap(this);
+  }
+}
+
+export default Sprite;

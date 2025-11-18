@@ -17,8 +17,15 @@
           <li>Avoid the ghosts or lose a life.</li>
         </ul>
       </div>
-      <canvas id="pakman"></canvas>
+      <div>
+        <h2>Score: <span id="score-value">0</span></h2>
+        <p id="win"></p>
+      </div>
+      <div id="game-container">
+        <canvas id="pakman-map"></canvas>
+        <canvas id="pakman"></canvas>
+      </div>
     </main>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
