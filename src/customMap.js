@@ -78,17 +78,17 @@ function drawMap(map, includeGrid = false) {
  * @param {MapRenderer} map
  */
 function drawFoodMap(map) {
-  map.drawPowerUp({ x: 1, y: 1 });
-  map.drawPowerUp({ x: 1, y: 13 });
-  map.drawPowerUp({ x: 18, y: 1 });
-  map.drawPowerUp({ x: 18, y: 13 });
-  map.drawPowerUp({ x: 9, y: 7 });
-  map.drawPowerUp({ x: 10, y: 9 });
-  map.drawPowerUp({ x: 5, y: 11 });
-  map.drawPowerUp({ x: 14, y: 11 });
-  map.drawPowerUp({ x: 14, y: 3 });
+  map.drawPowerUp(map.gameCtx, { x: 1, y: 1 });
+  map.drawPowerUp(map.gameCtx, { x: 1, y: 13 });
+  map.drawPowerUp(map.gameCtx, { x: 18, y: 1 });
+  map.drawPowerUp(map.gameCtx, { x: 18, y: 13 });
+  map.drawPowerUp(map.gameCtx, { x: 9, y: 7 });
+  map.drawPowerUp(map.gameCtx, { x: 10, y: 9 });
+  map.drawPowerUp(map.gameCtx, { x: 5, y: 11 });
+  map.drawPowerUp(map.gameCtx, { x: 14, y: 11 });
+  map.drawPowerUp(map.gameCtx, { x: 14, y: 3 });
 
-  map.drawFoodPallets();
+  map.drawFoodPallets(map.gameCtx);
 }
 
 export { drawMap, drawFoodMap };

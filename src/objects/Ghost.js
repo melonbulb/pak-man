@@ -23,21 +23,28 @@ class Ghost extends Sprite {
    */
   constructor(map, position, speed, color = "red") {
     super(map, position, speed);
-    this.size = map.tileSize * 0.8;
+    this.size = map.tileSize;
     this.color = color;
     this.baseColor = color;
     this.frightenColor = "blue";
     this.frightened = false;
+    this.icon = new Image();
+    this.icon.src = `./assets/ghost-${Math.floor(Math.random() * 4) + 1}.png`;
+    this.iconFrightened = new Image();
+    this.iconFrightened.src = "./assets/ghost-frightened.png";
   }
   /**
    * Draws the PakMan on the given canvas context.
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.size / 2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.drawImage(
+      this.frightened ? this.iconFrightened : this.icon,
+      this.position.x - this.size / 2,
+      this.position.y - this.size / 2,
+      this.size,
+      this.size
+    );
   }
 
   frighten() {
@@ -53,7 +60,7 @@ class Ghost extends Sprite {
       (dir) => dir !== this.direction
     );
     const newDirection =
-      possibleDirections.length > 2
+      possibleDirections.length > 1
         ? getRandomDirection(possibleDirections)
         : this.direction;
     super.move(newDirection);

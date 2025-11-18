@@ -21,20 +21,44 @@ class PakMan extends Sprite {
    */
   constructor(map, position, speed, color = "yellow") {
     super(map, position, speed);
-    this.size = map.tileSize * 0.8;
+    this.size = map.tileSize;
     this.color = color;
     this.score = 0;
     this.foodEaten = 0;
+    this.icon = new Image();
+    this.icon.src = "./assets/pakman.png";
   }
   /**
    * Draws the PakMan on the given canvas context.
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.size / 2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    switch (this.direction) {
+      case "up":
+        ctx.rotate((-90 * Math.PI) / 180);
+        break;
+      case "down":
+        ctx.rotate((90 * Math.PI) / 180);
+        break;
+      case "left":
+        ctx.transform(-1, 0, 0, 1, 0, 0);
+        break;
+      case "right":
+        // No rotation needed
+        break;
+      default:
+        break;
+    }
+    ctx.drawImage(
+      this.icon,
+      -this.size / 2,
+      -this.size / 2,
+      this.size,
+      this.size
+    );
+    ctx.restore();
   }
 
   eat() {
@@ -65,7 +89,7 @@ class PakMan extends Sprite {
     const distanceX = this.position.x - ghost.position.x;
     const distanceY = this.position.y - ghost.position.y;
     const distanceSquared = distanceX * distanceX + distanceY * distanceY;
-    const collisionDistance = (this.size + ghost.size) / 2;
+    const collisionDistance = (this.size + ghost.size) / 3;
     const collisionDistanceSquared = collisionDistance * collisionDistance;
     if (distanceSquared < collisionDistanceSquared) {
       return true;

@@ -21,6 +21,10 @@ class MapRenderer extends Map {
   constructor(bgCtx, gameCtx, width, height, tileSize) {
     super(bgCtx, width, height, tileSize);
     this.gameCtx = gameCtx;
+    this.powerUpIcon = new Image();
+    this.powerUpIcon.src = "./assets/power-up.png";
+    this.moneyIcon = new Image();
+    this.moneyIcon.src = "./assets/money.png";
   }
   /**
    * Draw a wall with neon purple outline
@@ -62,33 +66,39 @@ class MapRenderer extends Map {
 
   /**
    * Draw and add a power up to map
+   * @param {CanvasRenderingContext2D} ctx
    * @param {GridCoordinate} gridPosition
    */
-  drawPowerUp(gridPosition) {
+  drawPowerUp(ctx, gridPosition) {
     const added = this.tryToAddPowerUp(gridPosition);
     if (!added) return;
-    drawCircle(
-      this.gameCtx,
-      "orange",
-      getPosition(gridPosition, this.tileSize),
-      this.tileSize * 0.2
+    const position = getPosition(gridPosition, this.tileSize);
+    ctx.drawImage(
+      this.powerUpIcon,
+      position.x - this.tileSize / 2,
+      position.y - this.tileSize / 2,
+      this.tileSize,
+      this.tileSize
     );
   }
 
   /**
    * Draw food pallets
+   * @param {CanvasRenderingContext2D} ctx
    * @returns {number} count of food pallets drawn
    */
-  drawFoodPallets() {
+  drawFoodPallets(ctx) {
     let count = 0;
     for (let column = 0; column < this.columns; column++) {
       for (let row = 0; row < this.rows; row++) {
         if (this.map[row][column] === 2) {
-          drawCircle(
-            this.gameCtx,
-            "white",
-            getPosition({ x: column, y: row }, this.tileSize),
-            this.tileSize * 0.1
+          const position = getPosition({ x: column, y: row }, this.tileSize);
+          ctx.drawImage(
+            this.moneyIcon,
+            position.x - this.tileSize / 2,
+            position.y - this.tileSize / 2,
+            this.tileSize,
+            this.tileSize
           );
           count++;
         }

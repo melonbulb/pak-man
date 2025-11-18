@@ -69,7 +69,6 @@ class Map {
    */
   removeFoodPellet(gridPosition) {
     const { x: gridX, y: gridY } = gridPosition;
-    // console.log(this.map[gridY][gridX]);
     if (this.map[gridY][gridX] === 2) {
       this.map[gridY][gridX] = 0; // Mark as empty space
       return true;
@@ -84,7 +83,6 @@ class Map {
    */
   removePowerUp(gridPosition) {
     const { x: gridX, y: gridY } = gridPosition;
-    // console.log(this.map[gridY][gridX]);
     if (this.map[gridY][gridX] === 3) {
       this.map[gridY][gridX] = 0; // Mark as empty space
       return true;

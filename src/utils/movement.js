@@ -21,12 +21,28 @@ function isBlockedByWall(sprite) {
   const { x: gridX, y: gridY } = getGridPosition(position, map.tileSize);
   switch (direction) {
     case "up":
+      // handle if walking off the map
+      if (gridY - 1 < 0) {
+        return false;
+      }
       return map.map[gridY - 1][gridX] === 1;
     case "down":
+      // handle if walking off the map
+      if (gridY + 1 >= map.rows) {
+        return false;
+      }
       return map.map[gridY + 1][gridX] === 1;
     case "left":
+      // handle if walking off the map
+      if (gridX - 1 < 0) {
+        return false;
+      }
       return map.map[gridY][gridX - 1] === 1;
     case "right":
+      // handle if walking off the map
+      if (gridX + 1 >= map.columns) {
+        return false;
+      }
       return map.map[gridY][gridX + 1] === 1;
     default:
       return false;
@@ -36,6 +52,7 @@ function isBlockedByWall(sprite) {
 /**
  * Handles the sprite walking off the map and wraps it around.
  * @param {Sprite} sprite
+ * @returns {boolean}
  */
 function handleWalkingOffMap(sprite) {
   const { position, map, direction } = sprite;
@@ -44,24 +61,29 @@ function handleWalkingOffMap(sprite) {
     case "down":
       if (position.y > map.height + tileSize / 2) {
         sprite.setPosition({ x: position.x, y: -tileSize / 2 });
+        return true;
       }
       break;
     case "up":
       if (position.y < -tileSize / 2) {
         sprite.setPosition({ x: position.x, y: map.height + tileSize / 2 });
+        return true;
       }
       break;
     case "left":
       if (position.x < -tileSize / 2) {
         sprite.setPosition({ x: map.width + tileSize / 2, y: position.y });
+        return true;
       }
       break;
     case "right":
       if (position.x > map.width + tileSize / 2) {
         sprite.setPosition({ x: -tileSize / 2, y: position.y });
+        return true;
       }
       break;
   }
+  return false;
 }
 
 /**
@@ -106,7 +128,6 @@ function checkPossibleDirections(sprite) {
     "down",
     "left",
     "right",
-    "none",
   ]);
   const possibleDirections = availableDirections.filter((dir) => {
     return (
