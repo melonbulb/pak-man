@@ -9,7 +9,6 @@ import { drawFoodMap, drawMap } from "./customMap.js";
 import { getPosition } from "./utils/coordinate.js";
 import PakMan from "./objects/Pakman.js";
 import Map from "./objects/Map.js";
-import Sprite from "./objects/Sprite.js";
 import MapRenderer from "./objects/MapRenderer.js";
 import Ghost from "./objects/Ghost.js";
 
