@@ -42,9 +42,6 @@ class PakMan extends Sprite {
     if (!isTileCenter(this.position, map.tileSize)) {
       return;
     }
-    if (this.activeBooster === 0) {
-      this.speed = this.baseSpeed;
-    }
     if (map.removePowerUp(gridPosition)) {
       this.foodEaten++;
       this.score += 1000;

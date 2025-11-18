@@ -60,6 +60,9 @@ class Sprite {
    */
   move(requestedDirection) {
     requestedDirection && tryChangeDirection(this, requestedDirection);
+    if (this.activeBooster === 0) {
+      this.speed = this.baseSpeed;
+    }
     switch (this.direction) {
       case "up":
         this.moveUp();
