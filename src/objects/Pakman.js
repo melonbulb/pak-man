@@ -14,13 +14,13 @@ import Sprite from "./Sprite.js";
 class PakMan extends Sprite {
   /**
    * Initialize new PakMan
-   * @param {CanvasRenderingContext2D} ctx
    * @param {MapRenderer} map
    * @param {PixelCoordinate} position
    * @param {number} speed
+   * @param {string} color
    */
-  constructor(ctx, map, position, speed, color = "yellow") {
-    super(ctx, map, position, speed);
+  constructor(map, position, speed, color = "yellow") {
+    super(map, position, speed);
     this.size = map.tileSize * 0.8;
     this.color = color;
     this.score = 0;
@@ -28,9 +28,9 @@ class PakMan extends Sprite {
   }
   /**
    * Draws the PakMan on the given canvas context.
+   * @param {CanvasRenderingContext2D} ctx
    */
-  draw() {
-    const ctx = this.ctx;
+  draw(ctx) {
     ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.size / 2, 0, Math.PI * 2);

@@ -4,6 +4,7 @@
  * @import { PixelCoordinate, Direction } from '../types.js';
  */
 
+import { getGridPosition } from "../utils/coordinate.js";
 import {
   handleWalkingOffMap,
   isBlockedByWall,
@@ -17,13 +18,11 @@ import MapRenderer from "./MapRenderer.js";
 class Sprite {
   /**
    * Initialize new Sprite
-   * @param {CanvasRenderingContext2D} ctx
    * @param {MapRenderer} map
    * @param {PixelCoordinate} position
    * @param {number} speed
    */
-  constructor(ctx, map, position, speed) {
-    this.ctx = ctx;
+  constructor(map, position, speed) {
     this.map = map;
     this.position = { x: 0, y: 0 };
     this.gridPosition = { x: 0, y: 0 };
@@ -41,9 +40,7 @@ class Sprite {
    */
   setPosition(position) {
     this.position = position;
-    const gridX = Math.floor(position.x / this.map.tileSize);
-    const gridY = Math.floor(position.y / this.map.tileSize);
-    this.gridPosition = { x: gridX, y: gridY };
+    this.gridPosition = getGridPosition(position, this.map.tileSize);
   }
 
   /**
@@ -90,8 +87,7 @@ class Sprite {
   }
 
   moveRight() {
-    const { position, map, speed } = this;
-    const tileSize = map.tileSize;
+    const { position, speed } = this;
     if (isBlockedByWall(this) === true) {
       return;
     }

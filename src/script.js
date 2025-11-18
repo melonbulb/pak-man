@@ -2,7 +2,7 @@
 // @ts-ignore
 
 /**
- * @import { Direction } from './types.js';
+ * @import { Direction, GameRenderObjects } from './types.js';
  */
 
 import { drawFoodMap, drawMap } from "./customMap.js";
@@ -97,36 +97,37 @@ function checkWinCondition(player, map) {
 }
 
 /**
- *
- * @param {PakMan} player
- * @param {Array<Ghost>} ghosts
+ * Renders the game state on the canvas
+ * @param {GameRenderObjects} gameObj
  */
-function render(player, ghosts = []) {
-  player.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+function render(gameObj) {
+  const { map, player, ghosts = [] } = gameObj;
+  const ctx = map.gameCtx;
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   drawFoodMap(player.map);
-  player.draw();
+  player.draw(ctx);
   player.move(requestedDirection);
   player.eat();
   ghosts.forEach((ghost) => {
-    ghost.draw();
+    ghost.draw(ctx);
     ghost.move();
   });
 }
 
 /**
- *
- * @param {PakMan} player
- * @param {Array<Ghost>} ghosts
+ * Main game loop
+ * @param {GameRenderObjects} gameObj
  */
-function gameLoop(player, ghosts = []) {
-  render(player, ghosts);
+function gameLoop(gameObj) {
+  const { player, ghosts } = gameObj;
+  render(gameObj);
   if (checkWinCondition(player, player.map)) {
     return;
   } else if (ghosts.some((ghost) => player.checkCollision(ghost))) {
     updateStatus("You died!");
     return;
   } else {
-    requestAnimationFrame(() => gameLoop(player, ghosts));
+    requestAnimationFrame(() => gameLoop(gameObj));
   }
 }
 
@@ -149,15 +150,14 @@ function startGame() {
     tileSize
   );
   drawMap(map, true);
-  const player = new PakMan(gameCtx, map, spawn, 2);
+  const player = new PakMan(map, spawn, 2);
   const ali = new Ghost(
-    gameCtx,
     map,
     getPosition({ x: 5, y: 5 }, tileSize),
     0.5,
     "pink"
   );
-  gameLoop(player, [ali]);
+  gameLoop({ map, player, ghosts: [ali] });
 }
 
 startGame();
