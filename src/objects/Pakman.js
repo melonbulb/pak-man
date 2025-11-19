@@ -2,10 +2,10 @@
 
 /**
  * @import { PixelCoordinate } from '../types.js';
+ * @import MapRenderer from "./MapRenderer.js";
+ * @import Ghost from "./Ghost.js";
  */
 import { isTileCenter } from "../utils/coordinate.js";
-import Ghost from "./Ghost.js";
-import MapRenderer from "./MapRenderer.js";
 import Sprite from "./Sprite.js";
 
 /**

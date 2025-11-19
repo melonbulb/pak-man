@@ -14,19 +14,20 @@
 class Map {
   /**
    * @param {CanvasRenderingContext2D} ctx
-   * @param {number} width
-   * @param {number} height
+   * @param {number} columns
+   * @param {number} rows
    * @param {number} tileSize
    */
-  constructor(ctx, width, height, tileSize) {
+  constructor(ctx, columns, rows, tileSize) {
     this.ctx = ctx;
-    this.width = width;
-    this.height = height;
+    this.columns = columns;
+    this.rows = rows;
+    this.width = columns * tileSize;
+    this.height = rows * tileSize;
     this.tileSize = tileSize;
-    this.columns = width / tileSize;
-    this.rows = height / tileSize;
     this.numberOfWalls = 0;
     this.numberOfPowerUps = 0;
+    this.numberOfFoodPallets = columns * rows;
 
     this.map = this.initialMap(this.columns, this.rows);
   }
@@ -60,6 +61,7 @@ class Map {
     }
     this.numberOfWalls++;
     this.map[gridY][gridX] = 1;
+    this.numberOfFoodPallets--;
   }
 
   /**
@@ -71,6 +73,7 @@ class Map {
     const { x: gridX, y: gridY } = gridPosition;
     if (this.map[gridY][gridX] === 2) {
       this.map[gridY][gridX] = 0; // Mark as empty space
+      this.numberOfFoodPallets--;
       return true;
     }
     return false;
@@ -85,6 +88,7 @@ class Map {
     const { x: gridX, y: gridY } = gridPosition;
     if (this.map[gridY][gridX] === 3) {
       this.map[gridY][gridX] = 0; // Mark as empty space
+      this.numberOfPowerUps--;
       return true;
     }
     return false;
@@ -105,15 +109,13 @@ class Map {
     if (this.map[gridY][gridX] === 0) {
       return false; // Do not place power-up on empty space
     }
+    if (this.map[gridY][gridX] === 3) {
+      return true; // Power-up already exists
+    }
     this.numberOfPowerUps++;
+    this.numberOfFoodPallets--;
     this.map[gridY][gridX] = 3;
     return true;
-  }
-
-  numberOfFoodPallets() {
-    return (
-      this.columns * this.rows - this.numberOfWalls - this.numberOfPowerUps
-    );
   }
 }
 

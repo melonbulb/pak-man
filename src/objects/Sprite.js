@@ -4,12 +4,11 @@
  * @import { PixelCoordinate, Direction } from '../types.js';
  */
 
-import { getGridPosition } from "../utils/coordinate.js";
 import {
-  handleWalkingOffMap,
-  isBlockedByWall,
-  tryChangeDirection,
-} from "../utils/movement.js";
+  getGridPosition,
+  getPosition,
+  isTileCenter,
+} from "../utils/coordinate.js";
 import MapRenderer from "./MapRenderer.js";
 
 /**
@@ -56,9 +55,18 @@ class Sprite {
    * @param {Direction} [requestedDirection] The requested direction to change to
    */
   move(requestedDirection) {
-    requestedDirection && tryChangeDirection(this, requestedDirection);
+    requestedDirection && this.tryChangeDirection(requestedDirection);
     if (this.activeBooster === 0) {
       this.speed = this.baseSpeed;
+    }
+    // Align to center of tile when changing direction
+    if (this.direction === "left" || this.direction === "right") {
+      const centerY = getPosition(this.gridPosition, this.map.tileSize).y;
+      this.position.y = centerY;
+    }
+    if (this.direction === "up" || this.direction === "down") {
+      const centerX = getPosition(this.gridPosition, this.map.tileSize).x;
+      this.position.x = centerX;
     }
     switch (this.direction) {
       case "up":
@@ -78,42 +86,140 @@ class Sprite {
 
   moveLeft() {
     const { position, speed } = this;
-    if (isBlockedByWall(this) === true) {
+    if (this.isBlockedByWall() === true) {
       return;
     }
     position.x -= speed;
     this.setPosition(position);
-    handleWalkingOffMap(this);
+    this.handleWalkingOffMap();
   }
 
   moveRight() {
     const { position, speed } = this;
-    if (isBlockedByWall(this) === true) {
+    if (this.isBlockedByWall() === true) {
       return;
     }
     position.x += speed;
     this.setPosition(position);
-    handleWalkingOffMap(this);
+    this.handleWalkingOffMap();
   }
 
   moveUp() {
     const { position, speed } = this;
-    if (isBlockedByWall(this) === true) {
+    if (this.isBlockedByWall() === true) {
       return;
     }
     position.y -= speed;
     this.setPosition(position);
-    handleWalkingOffMap(this);
+    this.handleWalkingOffMap();
   }
 
   moveDown() {
     const { position, speed } = this;
-    if (isBlockedByWall(this) === true) {
+    if (this.isBlockedByWall() === true) {
       return;
     }
     position.y += speed;
     this.setPosition(position);
-    handleWalkingOffMap(this);
+    this.handleWalkingOffMap();
+  }
+
+  /**
+   * Changes the sprite direction when conditions are met:
+   * - sprite is at the tile center
+   * - sprite is not blocked by wall
+   * @param {Direction} requestedDirection
+   */
+  tryChangeDirection(requestedDirection) {
+    const { map, position } = this;
+    if (requestedDirection === "none") {
+      this.setDirection("none");
+      return;
+    }
+    if (isTileCenter(position, map.tileSize) === false) {
+      return;
+    }
+    if (this.isBlockedByWall(requestedDirection) === false) {
+      this.setDirection(requestedDirection);
+    }
+  }
+
+  /**
+   * Checks if there is a wall blocking the path in the direction
+   * @param {Direction} [requestedDirection]
+   * @returns {boolean}
+   */
+  isBlockedByWall(requestedDirection) {
+    const { map, direction, position } = this;
+    if (isTileCenter(position, map.tileSize) === false) {
+      return false;
+    }
+    const { x: gridX, y: gridY } = getGridPosition(position, map.tileSize);
+    const dir = requestedDirection || direction;
+    switch (dir) {
+      case "up":
+        // handle if walking off the map
+        if (gridY - 1 < 0) {
+          return false;
+        }
+        return map.map[gridY - 1][gridX] === 1;
+      case "down":
+        // handle if walking off the map
+        if (gridY + 1 >= map.rows) {
+          return false;
+        }
+        return map.map[gridY + 1][gridX] === 1;
+      case "left":
+        // handle if walking off the map
+        if (gridX - 1 < 0) {
+          return false;
+        }
+        return map.map[gridY][gridX - 1] === 1;
+      case "right":
+        // handle if walking off the map
+        if (gridX + 1 >= map.columns) {
+          return false;
+        }
+        return map.map[gridY][gridX + 1] === 1;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Handles the sprite walking off the map and wraps it around.
+   * @returns {boolean}
+   */
+  handleWalkingOffMap() {
+    const { position, map, direction } = this;
+    const { tileSize } = map;
+    switch (direction) {
+      case "down":
+        if (position.y > map.height + tileSize / 2) {
+          this.setPosition({ x: position.x, y: -tileSize / 2 });
+          return true;
+        }
+        break;
+      case "up":
+        if (position.y < -tileSize / 2) {
+          this.setPosition({ x: position.x, y: map.height + tileSize / 2 });
+          return true;
+        }
+        break;
+      case "left":
+        if (position.x < -tileSize / 2) {
+          this.setPosition({ x: map.width + tileSize / 2, y: position.y });
+          return true;
+        }
+        break;
+      case "right":
+        if (position.x > map.width + tileSize / 2) {
+          this.setPosition({ x: -tileSize / 2, y: position.y });
+          return true;
+        }
+        break;
+    }
+    return false;
   }
 }
 
