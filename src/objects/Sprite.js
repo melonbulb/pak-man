@@ -4,7 +4,11 @@
  * @import { PixelCoordinate, Direction } from '../types.js';
  */
 
-import { getGridPosition, isTileCenter } from "../utils/coordinate.js";
+import {
+  getGridPosition,
+  getPosition,
+  isTileCenter,
+} from "../utils/coordinate.js";
 import MapRenderer from "./MapRenderer.js";
 
 /**
@@ -54,6 +58,15 @@ class Sprite {
     requestedDirection && this.tryChangeDirection(requestedDirection);
     if (this.activeBooster === 0) {
       this.speed = this.baseSpeed;
+    }
+    // Align to center of tile when changing direction
+    if (this.direction === "left" || this.direction === "right") {
+      const centerY = getPosition(this.gridPosition, this.map.tileSize).y;
+      this.position.y = centerY;
+    }
+    if (this.direction === "up" || this.direction === "down") {
+      const centerX = getPosition(this.gridPosition, this.map.tileSize).x;
+      this.position.x = centerX;
     }
     switch (this.direction) {
       case "up":

@@ -59,19 +59,21 @@ let requestedDirection = "none";
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowUp":
+      if (gameState.isPaused) break;
       gameState.isPaused = false;
       requestedDirection = "up";
       break;
     case "ArrowDown":
+      if (gameState.isPaused) break;
       gameState.isPaused = false;
       requestedDirection = "down";
       break;
     case "ArrowLeft":
-      gameState.isPaused = false;
+      if (gameState.isPaused) break;
       requestedDirection = "left";
       break;
     case "ArrowRight":
-      gameState.isPaused = false;
+      if (gameState.isPaused) break;
       requestedDirection = "right";
       break;
     case "Escape":
