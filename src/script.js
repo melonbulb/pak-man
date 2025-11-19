@@ -1,9 +1,7 @@
 // @ts-check
-// @ts-ignore
 
 /**
  * @import { Direction, GameRenderObjects } from './types.js';
- * @import Map from './objects/Map.js';
  */
 
 import { drawFoodMap, drawMap } from "./customMap.js";
