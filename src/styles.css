@@ -13,6 +13,11 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+h1,
+h2 {
+  text-align: center;
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -79,6 +84,12 @@ canvas {
   display: flex !important;
 }
 
-.message h2 {
-  margin: 0 0 10px 0;
+.message button {
+  padding: 10px 20px;
+  background-color: var(--color-yellow-300);
+  color: var(--color-black-900);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 0 10px var(--color-neon-purple-400);
 }

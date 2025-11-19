@@ -16,7 +16,6 @@ Game inspired by the classic Pac-Man arcade experience.
 # How to play
 
 1. Use the arrow keys to move
-2. Collect items on tile to increase score
-3. Collect power items for speed boost
-4. To win, all item must be collected
-5. Avoid the ghost at all costs
+2. Collect power items for speed boost
+3. To win, all item must be collected
+4. Avoid the ghost at all costs
