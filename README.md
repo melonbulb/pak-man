@@ -19,3 +19,7 @@ Game inspired by the classic Pac-Man arcade experience.
 2. Collect power items for speed boost
 3. To win, all item must be collected
 4. Avoid the ghost at all costs
+
+# Tests
+
+[View report](coverage/lcov-report/index.html)
