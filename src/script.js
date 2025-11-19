@@ -76,7 +76,7 @@ window.addEventListener("keydown", (e) => {
       break;
     case "Escape":
       // requestedDirection = "none";
-      if (gameState.canResume() === false) break;
+      if (!gameState.isPaused && !gameState.canResume()) break;
       toggleMessage("paused-message", !gameState.isPaused);
       gameState.isPaused = !gameState.isPaused;
       break;
