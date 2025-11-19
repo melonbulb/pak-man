@@ -1,6 +1,6 @@
 # pak-man
 
-[Play]("https://melonbulb.github.io/pak-man/src/index.html")
+[Play](src/index.html)
 
 Game inspired by the classic Pac-Man arcade experience.
 
