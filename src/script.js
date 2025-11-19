@@ -78,8 +78,9 @@ window.addEventListener("keydown", (e) => {
       break;
     case "Escape":
       // requestedDirection = "none";
-      toggleMessage("paused-message");
-      gameState.isPaused = true;
+      if (gameState.canResume() === false) break;
+      toggleMessage("paused-message", !gameState.isPaused);
+      gameState.isPaused = !gameState.isPaused;
       break;
   }
 });
