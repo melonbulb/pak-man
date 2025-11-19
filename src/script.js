@@ -3,33 +3,50 @@
 
 /**
  * @import { Direction, GameRenderObjects } from './types.js';
+ * @import Map from './objects/Map.js';
  */
 
 import { drawFoodMap, drawMap } from "./customMap.js";
 import { getPosition } from "./utils/coordinate.js";
 import PakMan from "./objects/Pakman.js";
-import Map from "./objects/Map.js";
 import MapRenderer from "./objects/MapRenderer.js";
 import Ghost from "./objects/Ghost.js";
+import GameState from "./objects/GameState.js";
 
-const canvasWidth = 800;
-const canvasHeight = 600;
 const tileSize = 40;
-const spawn = getPosition({ x: 5, y: 1 }, tileSize);
+const mapColumns = 20;
+const mapRows = 15;
+
+const canvasWidth = tileSize * mapColumns;
+const canvasHeight = tileSize * mapRows;
+
+let gameState = new GameState();
 
 const canvas = /** @type {HTMLCanvasElement} */ (
   document.getElementById("pakman")
 );
 
-canvas.width = canvasWidth;
-canvas.height = canvasHeight;
-
 const canvasMap = /** @type {HTMLCanvasElement} */ (
   document.getElementById("pakman-map")
 );
+
+const restartButtonElements = document.querySelectorAll("#restart-button");
+restartButtonElements.forEach((button) => {
+  button.addEventListener("click", () => {
+    startGame();
+  });
+});
+
+const continueButton = document.getElementById("continue-button");
+continueButton?.addEventListener("click", () => {
+  toggleMessage("paused-message", false);
+  gameState.isPaused = false;
+});
+
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 canvasMap.width = canvasWidth;
 canvasMap.height = canvasHeight;
-
 document.documentElement.style.setProperty("--game-width", `${canvasWidth}px`);
 document.documentElement.style.setProperty(
   "--game-height",
@@ -44,24 +61,30 @@ let requestedDirection = "none";
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowUp":
+      gameState.isPaused = false;
       requestedDirection = "up";
       break;
     case "ArrowDown":
+      gameState.isPaused = false;
       requestedDirection = "down";
       break;
     case "ArrowLeft":
+      gameState.isPaused = false;
       requestedDirection = "left";
       break;
     case "ArrowRight":
+      gameState.isPaused = false;
       requestedDirection = "right";
       break;
     case "Escape":
-      requestedDirection = "none";
+      // requestedDirection = "none";
+      toggleMessage("paused-message");
+      gameState.isPaused = true;
       break;
   }
 });
 /**
- *
+ * Updates the score display in the DOM
  * @param {number} score
  */
 function handleScoreUpdate(score) {
@@ -73,27 +96,32 @@ function handleScoreUpdate(score) {
 
 /**
  * Updates the status message in the DOM
- * @param {string} message
+ * @param {string} element
  */
-function updateStatus(message) {
-  const winElement = document.getElementById("win");
-  if (winElement) {
-    winElement.textContent = message;
+function toggleMessage(element, show = true) {
+  const messageElement = document.getElementById(element);
+  if (messageElement) {
+    if (show) {
+      messageElement.classList.add("show");
+    } else {
+      messageElement.classList.remove("show");
+    }
   }
 }
 
 /**
- * Checks if the win condition is met and updates the DOM accordingly.
- * @param {PakMan} player
- * @param {Map} map
+ * Gets the 2D rendering contexts for the game and background canvases
+ * @returns {{ gameCtx: CanvasRenderingContext2D, bgCtx: CanvasRenderingContext2D }}
  */
-function checkWinCondition(player, map) {
-  handleScoreUpdate(player.score);
-  if (player.foodEaten >= map.numberOfFoodPallets() + map.numberOfPowerUps) {
-    updateStatus("You Win!");
-    return true;
+function getCtx() {
+  const gameCtx = canvas.getContext("2d");
+  const bgCtx = canvasMap.getContext("2d");
+  if (!gameCtx || !bgCtx) {
+    throw new Error("Could not get canvas context");
   }
-  return false;
+  gameCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+  bgCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+  return { gameCtx, bgCtx };
 }
 
 /**
@@ -106,11 +134,11 @@ function render(gameObj) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   drawFoodMap(player.map);
   player.draw(ctx);
-  player.move(requestedDirection);
-  player.eat();
+  gameState.canResume() && player.move(requestedDirection);
+  gameState.canResume() && player.eat();
   ghosts.forEach((ghost) => {
     ghost.draw(ctx);
-    ghost.move();
+    gameState.canResume() && ghost.move();
   });
 }
 
@@ -120,37 +148,30 @@ function render(gameObj) {
  */
 function gameLoop(gameObj) {
   const { player, ghosts } = gameObj;
+  handleScoreUpdate(player.score);
   render(gameObj);
-  if (checkWinCondition(player, player.map)) {
+  if (gameState.checkWinCondition(player.map)) {
+    toggleMessage("win-message");
     return;
   } else if (ghosts.some((ghost) => player.checkCollision(ghost))) {
-    updateStatus("You died!");
+    gameState.isGameOver = true;
+    toggleMessage("lose-message");
     return;
   } else {
     requestAnimationFrame(() => gameLoop(gameObj));
   }
 }
 
-function getCtx() {
-  const gameCtx = canvas.getContext("2d");
-  const bgCtx = canvasMap.getContext("2d");
-  if (!gameCtx || !bgCtx) {
-    throw new Error("Could not get canvas context");
-  }
-  return { gameCtx, bgCtx };
-}
-
 function startGame() {
+  toggleMessage("win-message", false);
+  toggleMessage("lose-message", false);
+  requestedDirection = "none";
+  gameState = new GameState();
+
   const { gameCtx, bgCtx } = getCtx();
-  const map = new MapRenderer(
-    bgCtx,
-    gameCtx,
-    canvasWidth,
-    canvasHeight,
-    tileSize
-  );
+  const map = new MapRenderer(bgCtx, gameCtx, mapColumns, mapRows, tileSize);
   drawMap(map, true);
-  const player = new PakMan(map, spawn, 2);
+  const player = new PakMan(map, getPosition({ x: 5, y: 1 }, tileSize), 2);
   const ali = new Ghost(
     map,
     getPosition({ x: 5, y: 5 }, tileSize),

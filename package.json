@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/melonbulb/pak-man#readme",
   "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
     "jest": "^30.2.0"
   }
 }

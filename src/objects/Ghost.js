@@ -1,13 +1,11 @@
 // @ts-check
 
 /**
- * @import { PixelCoordinate } from '../types.js';
+ * @import { Direction, PixelCoordinate } from '../types.js';
+ * @import MapRenderer from "./MapRenderer.js";
  */
-import {
-  checkPossibleDirections,
-  getRandomDirection,
-} from "../utils/movement.js";
-import MapRenderer from "./MapRenderer.js";
+import { isTileCenter } from "../utils/coordinate.js";
+import { getRandomDirection } from "../utils/movement.js";
 import Sprite from "./Sprite.js";
 
 /**
@@ -55,7 +53,7 @@ class Ghost extends Sprite {
   }
 
   move() {
-    let possibleDirections = checkPossibleDirections(this);
+    let possibleDirections = this.checkPossibleDirections();
     possibleDirections = possibleDirections.filter(
       (dir) => dir !== this.direction
     );
@@ -64,6 +62,28 @@ class Ghost extends Sprite {
         ? getRandomDirection(possibleDirections)
         : this.direction;
     super.move(newDirection);
+  }
+
+  /**
+   * Checks possible directions the sprite can move to
+   * @returns {Array<Direction>} directions
+   */
+  checkPossibleDirections() {
+    const { map, position } = this;
+    if (isTileCenter(position, map.tileSize) === false) {
+      return [];
+    }
+    const availableDirections = /**@type {Array<Direction>}*/ ([
+      "up",
+      "down",
+      "left",
+      "right",
+    ]);
+    const possibleDirections = availableDirections.filter((dir) => {
+      return this.isBlockedByWall(dir) === false;
+    });
+
+    return possibleDirections;
   }
 }
 export default Ghost;

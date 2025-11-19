@@ -3,7 +3,7 @@
  * @import { GridCoordinate } from '../types.js';
  */
 
-import { drawCircle, drawLine, drawRectangle } from "../libs/lib-draw.js";
+import { drawLine, drawRectangle } from "../libs/lib-draw.js";
 import { calculateDistance, getPosition } from "../utils/coordinate.js";
 import Map from "./Map.js";
 
@@ -14,12 +14,12 @@ class MapRenderer extends Map {
   /**
    * @param {CanvasRenderingContext2D} bgCtx
    * @param {CanvasRenderingContext2D} gameCtx
-   * @param {number} width
-   * @param {number} height
+   * @param {number} columns
+   * @param {number} rows
    * @param {number} tileSize
    */
-  constructor(bgCtx, gameCtx, width, height, tileSize) {
-    super(bgCtx, width, height, tileSize);
+  constructor(bgCtx, gameCtx, columns, rows, tileSize) {
+    super(bgCtx, columns, rows, tileSize);
     this.gameCtx = gameCtx;
     this.powerUpIcon = new Image();
     this.powerUpIcon.src = "./assets/power-up.png";

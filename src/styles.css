@@ -57,3 +57,28 @@ canvas {
   top: 0;
   left: 0;
 }
+
+#win-message,
+#lose-message,
+#paused-message {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--color-neon-purple-600);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 0 20px var(--color-neon-purple-400);
+}
+
+.show {
+  display: flex !important;
+}
+
+.message h2 {
+  margin: 0 0 10px 0;
+}
