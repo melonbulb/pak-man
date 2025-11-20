@@ -1,6 +1,6 @@
 # pak-man
 
-[Play](src/index.html)
+[Play](frontend/src/index.html)
 
 Game inspired by the classic Pac-Man arcade experience.
 
@@ -22,4 +22,4 @@ Game inspired by the classic Pac-Man arcade experience.
 
 # Tests
 
-[View report](coverage/lcov-report/index.html)
+[View report](frontend/coverage/lcov-report/index.html)
