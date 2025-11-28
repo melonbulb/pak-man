@@ -1,22 +1,120 @@
 ﻿namespace Backend;
 
+using Backend.Models;
+
 class Program
 {
     static void Main(string[] args)
     {
-        Map map = GenerateCustomMap1();
+        Menu();
+    }
 
-        map.PrintMap("graphical");
-        map.PrintReport();
-        Console.WriteLine("Map Json configuration" + map.Config());
+    static void SubMenu()
+    {
+        Map map = GenerateCustomMap1();
+        if (map != null)
+        {
+            Console.WriteLine("Map generated successfully.");
+            while (true)
+            {
+                Console.WriteLine("1. View Map (Graphical)");
+                Console.WriteLine("2. View Map (Numeric)");
+                Console.WriteLine("3. View Map Report");
+                Console.WriteLine("4. View Map JSON Configuration");
+                Console.WriteLine("5. Update player positions");
+                Console.WriteLine("6. Exit to Main Menu");
+                Console.WriteLine("Select an option: ");
+                int.TryParse(Console.ReadLine(), out int choice);
+                switch (choice)
+                {
+                    case 1:
+                        map.PrintMap("graphical");
+                        break;
+                    case 2:
+                        map.PrintMap();
+                        break;
+                    case 3:
+                        map.PrintReport();
+                        break;
+                    case 4:
+                        Console.WriteLine("Map JSON configuration" + map.Config);
+                        break;
+                    case 5:
+                        if (map.Player == null)
+                        {
+                            Console.WriteLine("No player found on the map.");
+                            Console.WriteLine("Adding player");
+                            Console.Write("Enter X position for player: ");
+                            int.TryParse(Console.ReadLine(), out int x);
+                            Console.Write("Enter Y position for player: ");
+                            int.TryParse(Console.ReadLine(), out int y);
+                            if (map.Graph.ContainsKey(new Map.Position(x, y)))
+                            {
+                                map.Player = new Player("Player1", "player.png", Position(x, y));
+                                Console.WriteLine("Player position updated.");
+                                break;
+                            }
+                            Console.WriteLine("Invalid position for player.");
+                        }
+                        else
+                        {
+
+                            Console.Write("Enter new X position for player: ");
+                            int.TryParse(Console.ReadLine(), out int x);
+                            Console.Write("Enter new Y position for player: ");
+                            int.TryParse(Console.ReadLine(), out int y);
+                            if (map.Graph.ContainsKey(new Map.Position(x, y)))
+                            {
+                                map.Player.Position = Position(x, y);
+                                Console.WriteLine("Player position updated.");
+                                break;
+                            }
+                            Console.WriteLine("Invalid position for player.");
+                        }
+                        break;
+                    case 6:
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+            }
+        }
+    }
+
+    static void Menu()
+    {
+        while (true)
+        {
+            Console.WriteLine("Map Generator Menu");
+            Console.WriteLine("1. Generate Custom Map 1");
+            Console.WriteLine("2. Exit");
+            Console.Write("Select an option: ");
+            int.TryParse(Console.ReadLine(), out int choice);
+            switch (choice)
+            {
+                case 1:
+                    SubMenu();
+                    break;
+                case 2:
+                    return;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+
+
     }
 
     static Map GenerateCustomMap1()
     {
         Map map = new Map(20, 15);
-        map.SetPlayerStart(Position(5, 1));
-        map.SetEnemiesStart([Position(14, 1), Position(14, 13)]);
-
+        map.Player = new Player("Player1", "player.png", Position(5, 1));
+        map.Enemies = [
+            new Enemy("Enemy1", "enemy.png", Position(14, 1)),
+            new Enemy("Enemy2", "enemy.png", Position(14, 13))
+        ];
 
         // draw walls
         // draw border walls
