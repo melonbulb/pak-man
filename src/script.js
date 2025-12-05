@@ -263,10 +263,6 @@ function createGameEntities(mapRenderer, playerConfig) {
     2
   );
 
-  // const ghosts = [
-  //   new Ghost(mapRenderer, getPosition({ x: 5, y: 5 }, TILE_SIZE), 0.5, "pink"),
-  // ];
-
   const ghosts = enemies.map((ghostConfig) => {
     return new Ghost(
       mapRenderer,
