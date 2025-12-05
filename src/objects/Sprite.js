@@ -39,7 +39,7 @@ class Sprite {
    */
   setPosition(position) {
     this.position = position;
-    this.gridPosition = getGridPosition(position, this.map.tileSize);
+    this.gridPosition = getGridPosition(position, this.map.map.tileSize);
   }
 
   /**
@@ -61,11 +61,11 @@ class Sprite {
     }
     // Align to center of tile when changing direction
     if (this.direction === "left" || this.direction === "right") {
-      const centerY = getPosition(this.gridPosition, this.map.tileSize).y;
+      const centerY = getPosition(this.gridPosition, this.map.map.tileSize).y;
       this.position.y = centerY;
     }
     if (this.direction === "up" || this.direction === "down") {
-      const centerX = getPosition(this.gridPosition, this.map.tileSize).x;
+      const centerX = getPosition(this.gridPosition, this.map.map.tileSize).x;
       this.position.x = centerX;
     }
     switch (this.direction) {
@@ -136,7 +136,7 @@ class Sprite {
       this.setDirection("none");
       return;
     }
-    if (isTileCenter(position, map.tileSize) === false) {
+    if (isTileCenter(position, map.map.tileSize) === false) {
       return;
     }
     if (this.isBlockedByWall(requestedDirection) === false) {
@@ -151,10 +151,10 @@ class Sprite {
    */
   isBlockedByWall(requestedDirection) {
     const { map, direction, position } = this;
-    if (isTileCenter(position, map.tileSize) === false) {
+    if (isTileCenter(position, map.map.tileSize) === false) {
       return false;
     }
-    const { x: gridX, y: gridY } = getGridPosition(position, map.tileSize);
+    const { x: gridX, y: gridY } = getGridPosition(position, map.map.tileSize);
     const dir = requestedDirection || direction;
     switch (dir) {
       case "up":
@@ -162,25 +162,25 @@ class Sprite {
         if (gridY - 1 < 0) {
           return false;
         }
-        return map.map[gridY - 1][gridX] === 1;
+        return map.map.mapArray[gridY - 1][gridX] === 1;
       case "down":
         // handle if walking off the map
-        if (gridY + 1 >= map.rows) {
+        if (gridY + 1 >= map.map.rows) {
           return false;
         }
-        return map.map[gridY + 1][gridX] === 1;
+        return map.map.mapArray[gridY + 1][gridX] === 1;
       case "left":
         // handle if walking off the map
         if (gridX - 1 < 0) {
           return false;
         }
-        return map.map[gridY][gridX - 1] === 1;
+        return map.map.mapArray[gridY][gridX - 1] === 1;
       case "right":
         // handle if walking off the map
-        if (gridX + 1 >= map.columns) {
+        if (gridX + 1 >= map.map.columns) {
           return false;
         }
-        return map.map[gridY][gridX + 1] === 1;
+        return map.map.mapArray[gridY][gridX + 1] === 1;
       default:
         return false;
     }
@@ -192,28 +192,28 @@ class Sprite {
    */
   handleWalkingOffMap() {
     const { position, map, direction } = this;
-    const { tileSize } = map;
+    const { tileSize } = map.map;
     switch (direction) {
       case "down":
-        if (position.y > map.height + tileSize / 2) {
+        if (position.y > map.map.height + tileSize / 2) {
           this.setPosition({ x: position.x, y: -tileSize / 2 });
           return true;
         }
         break;
       case "up":
         if (position.y < -tileSize / 2) {
-          this.setPosition({ x: position.x, y: map.height + tileSize / 2 });
+          this.setPosition({ x: position.x, y: map.map.height + tileSize / 2 });
           return true;
         }
         break;
       case "left":
         if (position.x < -tileSize / 2) {
-          this.setPosition({ x: map.width + tileSize / 2, y: position.y });
+          this.setPosition({ x: map.map.width + tileSize / 2, y: position.y });
           return true;
         }
         break;
       case "right":
-        if (position.x > map.width + tileSize / 2) {
+        if (position.x > map.map.width + tileSize / 2) {
           this.setPosition({ x: -tileSize / 2, y: position.y });
           return true;
         }

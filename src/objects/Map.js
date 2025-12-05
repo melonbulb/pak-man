@@ -13,110 +13,112 @@
  */
 class Map {
   /**
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {number} columns
-   * @param {number} rows
    * @param {number} tileSize
+   * @param {*} mapConfig
    */
-  constructor(ctx, columns, rows, tileSize) {
-    this.ctx = ctx;
+  constructor(tileSize, mapConfig) {
+    const { foodCount, powerUpCount, mapArray, columns, rows } = mapConfig;
     this.columns = columns;
     this.rows = rows;
     this.width = columns * tileSize;
     this.height = rows * tileSize;
     this.tileSize = tileSize;
-    this.numberOfWalls = 0;
-    this.numberOfPowerUps = 0;
-    this.numberOfFoodPallets = columns * rows;
-
-    this.map = this.initialMap(this.columns, this.rows);
+    this.mapArray = mapArray;
+    this.numberOfFoodPallets = foodCount;
+    this.numberOfPowerUps = powerUpCount;
   }
 
   /**
-   * Creates and initializes a 2D array with given columns and rows.
-   * @param {number} columns
-   * @param {number} rows
-   * @returns {number[][]}
-   */
-  initialMap(columns, rows) {
-    const map = [];
-    for (let y = 0; y < rows; y++) {
-      const row = [];
-      for (let x = 0; x < columns; x++) {
-        row.push(2); // Initialize all as empty space with food pellets
-      }
-      map.push(row);
-    }
-    return map;
-  }
-
-  /**
-   * Marks a tile as a wall in the wall map.
-   * @param {number} gridX
-   * @param {number} gridY
-   */
-  addWall(gridX, gridY) {
-    if (this.map[gridY][gridX] === 1) {
-      throw new Error(`Wall already exists at position (${gridX}, ${gridY})`);
-    }
-    this.numberOfWalls++;
-    this.map[gridY][gridX] = 1;
-    this.numberOfFoodPallets--;
-  }
-
-  /**
-   * Removes a food pallet from tile
+   *
    * @param {GridCoordinate} gridPosition
-   * @returns {Boolean} - true when a food pallet was found
+   * @returns {number} tile content
    */
-  removeFoodPellet(gridPosition) {
+  getTileContent(gridPosition) {
     const { x: gridX, y: gridY } = gridPosition;
-    if (this.map[gridY][gridX] === 2) {
-      this.map[gridY][gridX] = 0; // Mark as empty space
+    return this.mapArray[gridY][gridX];
+  }
+
+  /**
+   *
+   * @param {GridCoordinate} gridPosition
+   */
+  removeTileContent(gridPosition) {
+    const { x: gridX, y: gridY } = gridPosition;
+    if (this.mapArray[gridY][gridX] === 2) {
       this.numberOfFoodPallets--;
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Removes a power up from tile
-   * @param {GridCoordinate} gridPosition
-   * @returns {Boolean} - true when a food pallet was found
-   */
-  removePowerUp(gridPosition) {
-    const { x: gridX, y: gridY } = gridPosition;
-    if (this.map[gridY][gridX] === 3) {
-      this.map[gridY][gridX] = 0; // Mark as empty space
+    } else if (this.mapArray[gridY][gridX] === 3) {
       this.numberOfPowerUps--;
-      return true;
     }
-    return false;
+    this.mapArray[gridY][gridX] = 0;
   }
 
-  /**
-   * Marks a tile as containing a power-up in the wall map.
-   * @param {GridCoordinate} gridPosition
-   * @returns {Boolean} - true when power-up was added
-   */
-  tryToAddPowerUp(gridPosition) {
-    const { x: gridX, y: gridY } = gridPosition;
-    if (this.map[gridY][gridX] === 1) {
-      throw new Error(
-        `Cannot place power-up on a wall at position (${gridX}, ${gridY})`
-      );
-    }
-    if (this.map[gridY][gridX] === 0) {
-      return false; // Do not place power-up on empty space
-    }
-    if (this.map[gridY][gridX] === 3) {
-      return true; // Power-up already exists
-    }
-    this.numberOfPowerUps++;
-    this.numberOfFoodPallets--;
-    this.map[gridY][gridX] = 3;
-    return true;
-  }
+  // /**
+  //  * Marks a tile as a wall in the wall map.
+  //  * @param {number} gridX
+  //  * @param {number} gridY
+  //  */
+  // addWall(gridX, gridY) {
+  //   if (this.mapArray[gridY][gridX] === 1) {
+  //     throw new Error(`Wall already exists at position (${gridX}, ${gridY})`);
+  //   }
+  //   this.numberOfWalls++;
+  //   this.mapArray[gridY][gridX] = 1;
+  //   this.numberOfFoodPallets--;
+  // }
+
+  // /**
+  //  * Removes a food pallet from tile
+  //  * @param {GridCoordinate} gridPosition
+  //  * @returns {Boolean} - true when a food pallet was found
+  //  */
+  // removeFoodPellet(gridPosition) {
+  //   const { x: gridX, y: gridY } = gridPosition;
+  //   if (this.mapArray[gridY][gridX] === 2) {
+  //     this.mapArray[gridY][gridX] = 0; // Mark as empty space
+  //     this.numberOfFoodPallets--;
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  // /**
+  //  * Removes a power up from tile
+  //  * @param {GridCoordinate} gridPosition
+  //  * @returns {Boolean} - true when a food pallet was found
+  //  */
+  // removePowerUp(gridPosition) {
+  //   const { x: gridX, y: gridY } = gridPosition;
+  //   if (this.mapArray[gridY][gridX] === 3) {
+  //     this.mapArray[gridY][gridX] = 0; // Mark as empty space
+  //     this.numberOfPowerUps--;
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  // /**
+  //  * Marks a tile as containing a power-up in the wall map.
+  //  * @param {GridCoordinate} gridPosition
+  //  * @returns {Boolean} - true when power-up was added
+  //  */
+  // tryToAddPowerUp(gridPosition) {
+  //   const { x: gridX, y: gridY } = gridPosition;
+  //   if (this.mapArray[gridY][gridX] === 1) {
+  //     throw new Error(
+  //       `Cannot place power-up on a wall at position (${gridX}, ${gridY})`
+  //     );
+  //   }
+  //   if (this.mapArray[gridY][gridX] === 0) {
+  //     return false; // Do not place power-up on empty space
+  //   }
+  //   if (this.mapArray[gridY][gridX] === 3) {
+  //     return true; // Power-up already exists
+  //   }
+  //   this.numberOfPowerUps++;
+  //   this.numberOfFoodPallets--;
+  //   this.mapArray[gridY][gridX] = 3;
+  //   return true;
+  // }
 }
 
 export default Map;

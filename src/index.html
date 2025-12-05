@@ -18,6 +18,11 @@
           <li>Avoid the ghost at all costs</li>
         </ul>
       </div>
+      <div id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboard-list"></ol>
+      </div>
+
       <div>
         <h2>Score: <span id="score-value">0</span></h2>
         <p id="win"></p>
@@ -28,6 +33,14 @@
       </div>
       <div id="win-message" class="message">
         <h2>Congratulations! You Win!</h2>
+        <div class="instructions">
+          <h2>Player name</h2>
+          <p>Enter a name for the leaderboard</p>
+          <input type="text" id="player-name" placeholder="Enter your name" />
+        </div>
+        <br />
+        <button id="save-button" class="button">Save Score</button>
+        <br />
         <button id="restart-button" class="button">Restart Game</button>
       </div>
       <div id="lose-message" class="message">
@@ -40,5 +53,6 @@
       </div>
     </main>
     <script type="module" src="script.js"></script>
+    <script type="module" src="leaderboard.js"></script>
   </body>
 </html>

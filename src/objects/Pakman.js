@@ -8,6 +8,9 @@
 import { isTileCenter } from "../utils/coordinate.js";
 import Sprite from "./Sprite.js";
 
+const icon = new Image();
+icon.src = "./assets/pakman.png";
+
 /**
  * Represents the PakMan character in the game.
  */
@@ -21,12 +24,10 @@ class PakMan extends Sprite {
    */
   constructor(map, position, speed, color = "yellow") {
     super(map, position, speed);
-    this.size = map.tileSize;
+    this.size = map.map.tileSize;
     this.color = color;
     this.score = 0;
     this.foodEaten = 0;
-    this.icon = new Image();
-    this.icon.src = "./assets/pakman.png";
   }
   /**
    * Draws the PakMan on the given canvas context.
@@ -51,32 +52,36 @@ class PakMan extends Sprite {
       default:
         break;
     }
-    ctx.drawImage(
-      this.icon,
-      -this.size / 2,
-      -this.size / 2,
-      this.size,
-      this.size
-    );
+    ctx.drawImage(icon, -this.size / 2, -this.size / 2, this.size, this.size);
     ctx.restore();
   }
 
   eat() {
     const { gridPosition, map } = this;
-    if (!isTileCenter(this.position, map.tileSize)) {
+    if (!isTileCenter(this.position, map.map.tileSize)) {
       return;
     }
-    if (map.removePowerUp(gridPosition)) {
-      this.foodEaten++;
-      this.score += 1000;
-      this.activeBooster++;
-      this.speed = 5;
-      setTimeout(() => {
-        this.activeBooster--;
-      }, 5000);
-    } else if (map.removeFoodPellet(gridPosition)) {
-      this.foodEaten++;
-      this.score += 100;
+    const tileContent = map.map.getTileContent(gridPosition);
+    if (tileContent !== 2 && tileContent !== 3) {
+      return;
+    }
+    map.map.removeTileContent(gridPosition);
+    switch (tileContent) {
+      case 2:
+        this.foodEaten++;
+        this.score += 100;
+        break;
+      case 3:
+        this.foodEaten++;
+        this.score += 1000;
+        this.activeBooster++;
+        this.speed = 5;
+        setTimeout(() => {
+          this.activeBooster--;
+        }, 5000);
+        break;
+      default:
+        break;
     }
   }
 

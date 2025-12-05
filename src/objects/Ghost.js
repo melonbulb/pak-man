@@ -8,6 +8,11 @@ import { isTileCenter } from "../utils/coordinate.js";
 import { getRandomDirection } from "../utils/movement.js";
 import Sprite from "./Sprite.js";
 
+const icon = new Image();
+icon.src = `./assets/ghost-${Math.floor(Math.random() * 4) + 1}.png`;
+const iconFrightened = new Image();
+iconFrightened.src = "./assets/ghost-frightened.png";
+
 /**
  * Represents the Ghost character in the game.
  */
@@ -21,15 +26,11 @@ class Ghost extends Sprite {
    */
   constructor(map, position, speed, color = "red") {
     super(map, position, speed);
-    this.size = map.tileSize;
+    this.size = map.map.tileSize;
     this.color = color;
     this.baseColor = color;
     this.frightenColor = "blue";
     this.frightened = false;
-    this.icon = new Image();
-    this.icon.src = `./assets/ghost-${Math.floor(Math.random() * 4) + 1}.png`;
-    this.iconFrightened = new Image();
-    this.iconFrightened.src = "./assets/ghost-frightened.png";
   }
   /**
    * Draws the PakMan on the given canvas context.
@@ -37,7 +38,7 @@ class Ghost extends Sprite {
    */
   draw(ctx) {
     ctx.drawImage(
-      this.frightened ? this.iconFrightened : this.icon,
+      this.frightened ? iconFrightened : icon,
       this.position.x - this.size / 2,
       this.position.y - this.size / 2,
       this.size,
@@ -70,7 +71,7 @@ class Ghost extends Sprite {
    */
   checkPossibleDirections() {
     const { map, position } = this;
-    if (isTileCenter(position, map.tileSize) === false) {
+    if (isTileCenter(position, map.map.tileSize) === false) {
       return [];
     }
     const availableDirections = /**@type {Array<Direction>}*/ ([

@@ -1,6 +1,6 @@
 # pak-man
 
-[Play](frontend/src/index.html)
+[Play](src/index.html)
 
 Game inspired by the classic Pac-Man arcade experience.
 
@@ -20,6 +20,11 @@ Game inspired by the classic Pac-Man arcade experience.
 3. To win, all item must be collected
 4. Avoid the ghost at all costs
 
+# How to setup the game
+
+1. Clone the [backend api](https://github.com/melonbulb/PakManApiBackend) and run it
+2. Start a preview server, and access the index.html
+
 # Tests
 
-[View report](frontend/coverage/lcov-report/index.html)
+[View report](coverage/lcov-report/index.html)
