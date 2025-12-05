@@ -30,7 +30,7 @@ const {
   map: mapConfig,
   player: playerConfig,
   enemies,
-  graph,
+  graph: adjacentTilesGraph,
 } = await fetchGameState();
 const mapColumns = mapConfig.columns;
 const mapRows = mapConfig.rows;
@@ -162,7 +162,7 @@ function getCanvasContexts() {
  * @param {CanvasRenderingContext2D} ctx
  */
 function drawConsumables(mapRenderer, ctx) {
-  for (const tile in graph) {
+  for (const tile in adjacentTilesGraph) {
     const [x, y] = tile.split(",").map((coord) => parseInt(coord, 10));
     mapRenderer.drawConsumables(ctx, { x, y });
   }
@@ -294,7 +294,21 @@ function startGame(playerConfig) {
 
   const { gameCtx, bgCtx } = getCanvasContexts();
 
-  const mapRenderer = new MapRenderer(bgCtx, gameCtx, TILE_SIZE, mapConfig);
+  // Deep clone to avoid mutating the original config
+  const mapConfigCopy = {
+    ...mapConfig,
+    mapArray: mapConfig.mapArray.map((/** @type {number[]} */ row) => [...row]),
+  };
+
+  const adjacentTilesGraphCopy = JSON.parse(JSON.stringify(adjacentTilesGraph));
+
+  const mapRenderer = new MapRenderer(
+    bgCtx,
+    gameCtx,
+    TILE_SIZE,
+    mapConfigCopy,
+    adjacentTilesGraphCopy
+  );
 
   mapRenderer.drawWalls(bgCtx);
   mapRenderer.drawGrid(bgCtx);

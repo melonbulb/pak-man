@@ -22,9 +22,10 @@ class MapRenderer {
    * @param {CanvasRenderingContext2D} gameCtx
    * @param {number} tileSize
    * @param {*} mapConfig
+   * @param {{[key: string]: string[]}} adjacentTilesGraph
    */
-  constructor(bgCtx, gameCtx, tileSize, mapConfig) {
-    this.map = new Map(tileSize, mapConfig);
+  constructor(bgCtx, gameCtx, tileSize, mapConfig, adjacentTilesGraph) {
+    this.map = new Map(tileSize, mapConfig, adjacentTilesGraph);
     this.bgCtx = bgCtx;
     this.gameCtx = gameCtx;
   }

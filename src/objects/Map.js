@@ -15,8 +15,9 @@ class Map {
   /**
    * @param {number} tileSize
    * @param {*} mapConfig
+   * @param {{[key: string]: string[]}} adjacentTilesGraph
    */
-  constructor(tileSize, mapConfig) {
+  constructor(tileSize, mapConfig, adjacentTilesGraph) {
     const { foodCount, powerUpCount, mapArray, columns, rows } = mapConfig;
     this.columns = columns;
     this.rows = rows;
@@ -26,6 +27,8 @@ class Map {
     this.mapArray = mapArray;
     this.numberOfFoodPallets = foodCount;
     this.numberOfPowerUps = powerUpCount;
+    this.adjacentTilesGraph = adjacentTilesGraph;
+    console.log("Map initialized:", mapConfig);
   }
 
   /**
